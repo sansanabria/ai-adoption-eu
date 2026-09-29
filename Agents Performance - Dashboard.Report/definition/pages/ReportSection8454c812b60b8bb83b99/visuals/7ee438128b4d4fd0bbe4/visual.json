@@ -1,0 +1,74 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "7ee438128b4d4fd0bbe4",
+  "position": {
+    "x": 410,
+    "y": 110,
+    "z": 1000,
+    "height": 130,
+    "width": 358,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionOverallEU"
+                    }
+                  },
+                  "Property": "EU Individuals Using AI %"
+                }
+              },
+              "queryRef": "AIAdoptionOverallEU.EU Individuals Using AI %",
+              "nativeQueryRef": "EU Individuals Using AI %"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'EU individuals using AI (any use)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

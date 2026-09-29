@@ -1,0 +1,74 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "61cf214d9a1340498f3c",
+  "position": {
+    "x": 1520,
+    "y": 110,
+    "z": 1000,
+    "height": 130,
+    "width": 358,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionOverallEU"
+                    }
+                  },
+                  "Property": "EU Avg Hours Saved per Month"
+                }
+              },
+              "queryRef": "AIAdoptionOverallEU.EU Avg Hours Saved per Month",
+              "nativeQueryRef": "EU Avg Hours Saved per Month"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Avg. hours saved per month'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

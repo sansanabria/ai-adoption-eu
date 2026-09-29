@@ -1,0 +1,91 @@
+/// Work-related AI usage outcomes by occupation group, 2026 EU survey. Source: European Commission DG ECFIN Spring 2026 Economic Forecast.
+table AIAdoptionByOccupation
+	lineageTag: a46f8cc1-94cd-407b-b0d2-1f6002153d1a
+
+	/// Monthly hours saved from AI use at work, for the selected occupation group. EC 2026 survey.
+	measure 'Hours Saved per Month' = SUM ( AIAdoptionByOccupation[HoursSavedPerMonth] )
+		formatString: 0.0
+		lineageTag: f2c9cd0d-9af1-44b5-b156-3e4ba8defc4e
+
+	/// Share reporting an output-quality improvement from AI use, for the selected occupation group. EC 2026 survey.
+	measure 'Reporting Quality Improvement %' = SUM ( AIAdoptionByOccupation[PctReportingQualityImprovement] )
+		formatString: 0.0"%"
+		lineageTag: d7b7c923-6c00-4f2e-a16e-5c8d9c80933e
+
+	column OccupationGroup
+		dataType: string
+		lineageTag: ba90753d-c5fb-4a63-8c6e-3fd272feaac6
+		summarizeBy: none
+		sourceColumn: OccupationGroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column HoursSavedPerMonth
+		dataType: decimal
+		isHidden
+		formatString: 0.0
+		lineageTag: c461dc33-7590-4b5d-924d-aa966eb8ce10
+		summarizeBy: none
+		sourceColumn: HoursSavedPerMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column PctReportingQualityImprovement
+		dataType: decimal
+		isHidden
+		formatString: 0.0"%"
+		lineageTag: f8725116-8c66-40cf-878e-e6a91ae2614d
+		summarizeBy: none
+		sourceColumn: PctReportingQualityImprovement
+
+		annotation SummarizationSetBy = Automatic
+
+	column PctReportingNoImprovement
+		dataType: decimal
+		formatString: 0.0"%"
+		lineageTag: 5331dc1b-7911-44c5-90db-7b23e17434c2
+		summarizeBy: none
+		sourceColumn: PctReportingNoImprovement
+
+		annotation SummarizationSetBy = Automatic
+
+	column DisplacementConcernLevel
+		dataType: string
+		lineageTag: 916b7002-3cd9-48fa-8c27-2fc1d701581e
+		summarizeBy: none
+		sourceColumn: DisplacementConcernLevel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: c763f557-9c76-4ec5-922a-db809475b973
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: 0f573c9b-5731-4127-86dc-aea3105791d9
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AIAdoptionByOccupation = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionByOccupation.csv"),[Delimiter=",", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"OccupationGroup", type text}, {"HoursSavedPerMonth", Currency.Type}, {"PctReportingQualityImprovement", Currency.Type}, {"PctReportingNoImprovement", Currency.Type}, {"DisplacementConcernLevel", type text}, {"Year", Int64.Type}, {"Source", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

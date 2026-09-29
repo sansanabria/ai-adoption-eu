@@ -1,0 +1,74 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "f030e62748854dcfa9cc",
+  "position": {
+    "x": 1600,
+    "y": 1440,
+    "z": 1000,
+    "height": 110,
+    "width": 280,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GenAIUseByCountry"
+                    }
+                  },
+                  "Property": "Uses GenAI for Education %"
+                }
+              },
+              "queryRef": "GenAIUseByCountry.Uses GenAI for Education %",
+              "nativeQueryRef": "Uses GenAI for Education %"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'GenAI use: education (EU-27)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

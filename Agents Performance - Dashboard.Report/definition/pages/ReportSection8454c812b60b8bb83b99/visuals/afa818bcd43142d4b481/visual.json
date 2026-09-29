@@ -1,0 +1,74 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "afa818bcd43142d4b481",
+  "position": {
+    "x": 1000,
+    "y": 1440,
+    "z": 1000,
+    "height": 110,
+    "width": 280,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GenAIUseByCountry"
+                    }
+                  },
+                  "Property": "Uses GenAI Privately %"
+                }
+              },
+              "queryRef": "GenAIUseByCountry.Uses GenAI Privately %",
+              "nativeQueryRef": "Uses GenAI Privately %"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'GenAI use: private purposes (EU-27)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

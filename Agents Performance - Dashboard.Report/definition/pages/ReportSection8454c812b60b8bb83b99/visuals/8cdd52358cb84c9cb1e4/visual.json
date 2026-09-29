@@ -1,0 +1,109 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "8cdd52358cb84c9cb1e4",
+  "position": {
+    "x": 40,
+    "y": 1440,
+    "z": 1000,
+    "height": 220,
+    "width": 910,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionByOccupation"
+                    }
+                  },
+                  "Property": "OccupationGroup"
+                }
+              },
+              "queryRef": "AIAdoptionByOccupation.OccupationGroup",
+              "nativeQueryRef": "OccupationGroup"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionByOccupation"
+                    }
+                  },
+                  "Property": "Hours Saved per Month"
+                }
+              },
+              "queryRef": "AIAdoptionByOccupation.Hours Saved per Month",
+              "nativeQueryRef": "Hours Saved per Month"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionByOccupation"
+                    }
+                  },
+                  "Property": "DisplacementConcernLevel"
+                }
+              },
+              "queryRef": "AIAdoptionByOccupation.DisplacementConcernLevel",
+              "nativeQueryRef": "DisplacementConcernLevel"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'growToFit'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Who benefits most at work (EC 2026 survey, n=21,207)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

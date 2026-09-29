@@ -1,0 +1,85 @@
+/// Headline EU individual AI adoption and productivity metrics, 2026 EU survey. Source: European Commission DG ECFIN Spring 2026 Economic Forecast.
+table AIAdoptionOverallEU
+	lineageTag: 0d0264f1-d7f5-4e54-86a7-af6f2a99873a
+
+	/// Share of EU individuals using AI technologies for any purpose. EC 2026 survey.
+	measure 'EU Individuals Using AI %' = CALCULATE ( SUM ( AIAdoptionOverallEU[Value] ), AIAdoptionOverallEU[Metric] = "Uses AI technologies (any use)" )
+		formatString: 0"%"
+		displayFolder: Headline KPIs
+		lineageTag: 5d952f74-42ab-4635-a389-4d86349b2460
+
+	/// Share of EU individuals who use AI specifically for work. EC 2026 survey.
+	measure 'EU Individuals Using AI for Work %' = CALCULATE ( SUM ( AIAdoptionOverallEU[Value] ), AIAdoptionOverallEU[Metric] = "Uses AI for work" )
+		formatString: 0"%"
+		displayFolder: Headline KPIs
+		lineageTag: 3e68804a-468d-4571-a49d-8f1312b059dc
+
+	/// Share of work-AI users who report completing tasks faster. EC 2026 survey.
+	measure 'EU Faster Task Completion %' = CALCULATE ( SUM ( AIAdoptionOverallEU[Value] ), AIAdoptionOverallEU[Metric] = "Reports faster task completion (work AI users)" )
+		formatString: 0"%"
+		displayFolder: Headline KPIs
+		lineageTag: 07ac2a22-e9b0-4441-b5fc-e29a82e04ab1
+
+	/// Average monthly hours saved from AI use, among employed AI users. EC 2026 survey.
+	measure 'EU Avg Hours Saved per Month' = CALCULATE ( SUM ( AIAdoptionOverallEU[Value] ), AIAdoptionOverallEU[Metric] = "Average time saved per month (employed AI users)" )
+		formatString: 0.0
+		displayFolder: Headline KPIs
+		lineageTag: b4012040-ad30-4225-917c-264759f85228
+
+	column Metric
+		dataType: string
+		lineageTag: 975d45d7-c8b0-485e-9733-c2d9f657104d
+		summarizeBy: none
+		sourceColumn: Metric
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: decimal
+		formatString: #,##0.00
+		lineageTag: f8a11daa-bc6f-4016-8c29-f67cf24cdc78
+		summarizeBy: none
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unit
+		dataType: string
+		lineageTag: 0927ccf0-4138-4719-9fc8-2171b94948bc
+		summarizeBy: none
+		sourceColumn: Unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ee57363-bed4-4777-b198-8831ebafb87d
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: b883dee2-4422-46cf-ad4a-aab4a34a1834
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AIAdoptionOverallEU = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionOverallEU.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Metric", type text}, {"Value", Currency.Type}, {"Unit", type text}, {"Year", Int64.Type}, {"Source", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

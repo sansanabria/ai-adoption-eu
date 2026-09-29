@@ -1,0 +1,51 @@
+/// EU enterprise AI adoption rate by year (2021-2025). Source: Eurostat isoc_eb_ai.
+table AIAdoptionTrendEU
+	lineageTag: 8b71d165-e9c0-4866-b2ab-880a7fd8fb0e
+
+	/// EU enterprise AI adoption rate for the selected year(s).
+	measure 'Enterprise Adoption %' = SUM ( AIAdoptionTrendEU[EnterpriseAdoptionPct] )
+		formatString: 0.0"%"
+		lineageTag: 0c88efab-b3e9-42a6-90e5-937726d9c5a5
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: d7e7342f-0b96-4d01-af41-7ecc7b301a0c
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column EnterpriseAdoptionPct
+		dataType: decimal
+		isHidden
+		formatString: 0.0"%"
+		lineageTag: 457246bd-4f4a-4e80-abc9-d5a964335ae0
+		summarizeBy: none
+		sourceColumn: EnterpriseAdoptionPct
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: b71b6f7d-01c3-47ae-80a3-5426a78e21d7
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AIAdoptionTrendEU = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionTrendEU.csv"),[Delimiter=",", Columns=3, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Year", Int64.Type}, {"EnterpriseAdoptionPct", Currency.Type}, {"Source", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

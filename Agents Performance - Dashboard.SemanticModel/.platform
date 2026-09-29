@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Agents Performance - Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "385b32d3-652a-422c-b0fe-6cc8db430816"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "00f52068e3dc4b9eb2b9",
+  "position": {
+    "x": 1000,
+    "y": 580,
+    "z": 1000,
+    "height": 360,
+    "width": 880,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionBySector"
+                    }
+                  },
+                  "Property": "Sector"
+                }
+              },
+              "queryRef": "AIAdoptionBySector.Sector",
+              "nativeQueryRef": "Sector"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionBySector"
+                    }
+                  },
+                  "Property": "Sector Enterprise Adoption %"
+                }
+              },
+              "queryRef": "AIAdoptionBySector.Sector Enterprise Adoption %",
+              "nativeQueryRef": "Sector Enterprise Adoption %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "AIAdoptionBySector"
+                  }
+                },
+                "Property": "Sector Enterprise Adoption %"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {},
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Adoption across the economy (sector, 2025)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

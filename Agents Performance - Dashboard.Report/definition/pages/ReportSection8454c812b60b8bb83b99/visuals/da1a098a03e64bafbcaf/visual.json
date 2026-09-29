@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "da1a098a03e64bafbcaf",
+  "position": {
+    "x": 40,
+    "y": 1690,
+    "z": 5000,
+    "height": 90,
+    "width": 1840,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRunsCollection": [
+                  {
+                    "textRunsCollection": [
+                      {
+                        "value": "Sources: Eurostat \"Use of artificial intelligence in enterprises\" (isoc_eb_ai, isoc_eb_ain2), 2025 reference year, published 11 Dec 2025. Eurostat \"Individuals: use of generative AI tools\" (isoc_ai_iaiu), 2025 reference year. European Commission DG ECFIN, \"The AI-adoption divide,\" Spring 2026 Economic Forecast (Feb\u2013Mar 2026 survey, n=21,207).",
+                        "textStyle": {
+                          "fontSize": "10px",
+                          "color": "#898781"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

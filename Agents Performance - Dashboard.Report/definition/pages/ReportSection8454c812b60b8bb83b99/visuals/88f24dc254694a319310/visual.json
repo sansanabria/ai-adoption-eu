@@ -1,0 +1,92 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "88f24dc254694a319310",
+  "position": {
+    "x": 40,
+    "y": 260,
+    "z": 1000,
+    "height": 300,
+    "width": 1140,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionTrendEU"
+                    }
+                  },
+                  "Property": "Year"
+                }
+              },
+              "queryRef": "AIAdoptionTrendEU.Year",
+              "nativeQueryRef": "Year"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionTrendEU"
+                    }
+                  },
+                  "Property": "Enterprise Adoption %"
+                }
+              },
+              "queryRef": "AIAdoptionTrendEU.Enterprise Adoption %",
+              "nativeQueryRef": "Enterprise Adoption %"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "dataPoint": [
+        {
+          "properties": {
+            "showAllDataPoints": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Enterprise adoption is accelerating (2021\u20132025)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

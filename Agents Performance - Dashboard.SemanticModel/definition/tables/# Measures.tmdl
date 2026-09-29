@@ -1,0 +1,109 @@
+/// Disconnected table holding cross-table KPI measures for the AI Adoption in the Workplace report.
+table '# Measures'
+	lineageTag: b6224613-9a70-4b57-b8b2-4cf4249bf2cf
+
+	/// EU enterprise AI adoption rate for the most recent year available in the Eurostat trend data (2025).
+	measure 'Latest EU Enterprise Adoption %' =
+			
+			VAR _LatestYear = MAX( AIAdoptionTrendEU[Year] )
+			RETURN
+			CALCULATE(
+			    SUM( AIAdoptionTrendEU[EnterpriseAdoptionPct] ),
+			    AIAdoptionTrendEU[Year] = _LatestYear
+			)
+		formatString: 0.0"%"
+		displayFolder: Enterprise Adoption
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a01
+
+	/// Change in EU enterprise AI adoption rate, in percentage points, versus the prior year on record.
+	measure 'Enterprise Adoption YoY Growth (pp)' =
+			
+			VAR _LatestYear = MAX( AIAdoptionTrendEU[Year] )
+			VAR _PriorYear =
+			    CALCULATE(
+			        MAX( AIAdoptionTrendEU[Year] ),
+			        AIAdoptionTrendEU[Year] < _LatestYear
+			    )
+			VAR _LatestValue = [Latest EU Enterprise Adoption %]
+			VAR _PriorValue =
+			    CALCULATE(
+			        SUM( AIAdoptionTrendEU[EnterpriseAdoptionPct] ),
+			        AIAdoptionTrendEU[Year] = _PriorYear
+			    )
+			RETURN
+			    _LatestValue - _PriorValue
+		formatString: 0.0
+		displayFolder: Enterprise Adoption
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a02
+
+	/// EU enterprise AI adoption rate in 2021, the earliest year in the Eurostat trend series.
+	measure 'Enterprise Adoption 2021 Baseline %' =
+			
+			CALCULATE(
+			    SUM( AIAdoptionTrendEU[EnterpriseAdoptionPct] ),
+			    AIAdoptionTrendEU[Year] = 2021
+			)
+		formatString: 0.0"%"
+		displayFolder: Enterprise Adoption
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a03
+
+	/// Business function with the highest share of AI-using enterprises applying AI to it, across all enterprise sizes, 2025.
+	measure 'Top Business Function by Adoption' =
+			
+			CALCULATE(
+			    SELECTEDVALUE( AIAdoptionByBusinessFunction[BusinessFunction] ),
+			    TOPN(
+			        1,
+			        FILTER(
+			            ALL( AIAdoptionByBusinessFunction ),
+			            AIAdoptionByBusinessFunction[EnterpriseSize] = "All (10+)"
+			        ),
+			        AIAdoptionByBusinessFunction[PctOfAIUsingEnterprises], DESC
+			    )
+			)
+		displayFolder: Business Function
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a04
+
+	/// Average monthly hours saved from AI use at work, averaged across the EC 2026 survey's occupation groups.
+	measure 'Avg Hours Saved per Month (EC survey)' =
+			
+			AVERAGE( AIAdoptionByOccupation[HoursSavedPerMonth] )
+		formatString: 0.0
+		displayFolder: Occupation
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a05
+
+	/// EU country with the highest enterprise AI adoption rate, 2025.
+	measure 'Top Country by Enterprise Adoption' =
+			
+			CALCULATE(
+			    SELECTEDVALUE( AIAdoptionByCountry[Country] ),
+			    TOPN( 1, ALL( AIAdoptionByCountry ), AIAdoptionByCountry[EnterpriseAdoptionPct], DESC )
+			)
+		displayFolder: Country
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a06
+
+	/// Share of EU generative-AI users who use it for professional/work purposes (EU-27 aggregate), 2025.
+	measure 'EU GenAI Use for Work %' =
+			
+			CALCULATE(
+			    SELECTEDVALUE( GenAIUseByCountry[PctUsedForProfessionalWorkPurposes] ),
+			    GenAIUseByCountry[Country] = "European Union - 27 countries (from 2020)"
+			)
+		formatString: 0.0"%"
+		displayFolder: Country
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a07
+
+	column Value1
+		isHidden
+		formatString: 0
+		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a00
+		summarizeBy: sum
+		sourceColumn: Value1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '# Measures' = calculated
+		source = {1}
+
+	annotation PBI_ResultType = Table
+

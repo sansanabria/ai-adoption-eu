@@ -1,0 +1,5 @@
+EnterpriseSize,EnterpriseAdoptionPct,Year,Source
+Small (10-49),17.0,2025,"Eurostat - Use of artificial intelligence in enterprises (isoc_eb_ai / isoc_eb_ain2), 2025 reference year, published 2025-12-11"
+Medium (50-249),30.36,2025,"Eurostat - Use of artificial intelligence in enterprises (isoc_eb_ai / isoc_eb_ain2), 2025 reference year, published 2025-12-11"
+Large (250+),55.03,2025,"Eurostat - Use of artificial intelligence in enterprises (isoc_eb_ai / isoc_eb_ain2), 2025 reference year, published 2025-12-11"
+All (10+),19.95,2025,"Eurostat - Use of artificial intelligence in enterprises (isoc_eb_ai / isoc_eb_ain2), 2025 reference year, published 2025-12-11"

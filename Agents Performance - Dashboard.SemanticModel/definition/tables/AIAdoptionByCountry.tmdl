@@ -1,0 +1,68 @@
+/// EU enterprise AI adoption rate by country, 2025. Source: Eurostat isoc_eb_ai.
+table AIAdoptionByCountry
+	lineageTag: 416909e1-84d5-43a5-b2fb-ab27ec08543e
+
+	/// Enterprise AI adoption rate for the selected country/countries, 2025.
+	measure 'Country Enterprise Adoption %' = SUM ( AIAdoptionByCountry[EnterpriseAdoptionPct] )
+		formatString: 0.0"%"
+		lineageTag: 0bf40e35-f781-491b-a4c3-7267a7228db8
+
+	column Country
+		dataType: string
+		lineageTag: 27cb9fba-1842-4550-9a2c-13b3a6b62a75
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column CountryCode
+		dataType: string
+		lineageTag: 0fd73bab-c700-467c-8a01-63d4a09bf1e6
+		summarizeBy: none
+		sourceColumn: CountryCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column EnterpriseAdoptionPct
+		dataType: decimal
+		isHidden
+		formatString: 0.0"%"
+		lineageTag: c0bafa54-e217-4c44-9c7b-c836b3923473
+		summarizeBy: none
+		sourceColumn: EnterpriseAdoptionPct
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: ea5be211-1059-40d8-96d7-92e234eaf9d4
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: 9e88bd9a-b14f-4dad-b5e9-e78a56072d91
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AIAdoptionByCountry = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionByCountry.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Country", type text}, {"CountryCode", type text}, {"EnterpriseAdoptionPct", Currency.Type}, {"Year", Int64.Type}, {"Source", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

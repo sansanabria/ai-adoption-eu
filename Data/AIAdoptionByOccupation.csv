@@ -1,0 +1,4 @@
+OccupationGroup,HoursSavedPerMonth,PctReportingQualityImprovement,PctReportingNoImprovement,DisplacementConcernLevel,Year,Source
+Managers and Professionals,8.5,,,Lower,2026,"European Commission DG ECFIN - Spring 2026 Economic Forecast, 'The AI-adoption divide: who benefits, who doesn't, and what it means for workers' (Feb-Mar 2026 survey, n=21,207)"
+Plant and Machine Operators / Elementary Occupations,8.3,,,Highest,2026,"European Commission DG ECFIN - Spring 2026 Economic Forecast, 'The AI-adoption divide: who benefits, who doesn't, and what it means for workers' (Feb-Mar 2026 survey, n=21,207)"
+Students and Unpaid Workers,9.0,41,18,High,2026,"European Commission DG ECFIN - Spring 2026 Economic Forecast, 'The AI-adoption divide: who benefits, who doesn't, and what it means for workers' (Feb-Mar 2026 survey, n=21,207)"

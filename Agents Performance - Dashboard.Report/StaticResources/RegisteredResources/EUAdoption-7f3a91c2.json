@@ -1,0 +1,68 @@
+{
+  "name": "EUAdoption-7f3a91c2.json",
+  "dataColors": [
+    "#2A78D6",
+    "#EDA100",
+    "#1BAF7A",
+    "#EB6834",
+    "#4A3AA7",
+    "#E87BA4",
+    "#184F95",
+    "#E34948"
+  ],
+  "good": "#0CA30C",
+  "neutral": "#FAB219",
+  "bad": "#D03B3B",
+  "maximum": "#184F95",
+  "center": "#86B6EF",
+  "minimum": "#CDE2FB",
+  "null": "#898781",
+  "foreground": "#0B0B0B",
+  "foregroundNeutralSecondary": "#52514E",
+  "backgroundLight": "#E1E0D9",
+  "foregroundNeutralTertiary": "#898781",
+  "background": "#FCFCFB",
+  "backgroundNeutral": "#F0EFEC",
+  "tableAccent": "#2A78D6",
+  "textClasses": {
+    "label": { "fontSize": 10, "fontFace": "Segoe UI", "color": "#0B0B0B" },
+    "title": { "fontSize": 12, "fontFace": "Segoe UI Semibold", "color": "#0B0B0B" },
+    "callout": { "fontSize": 32, "fontFace": "Segoe UI Semibold", "color": "#0B0B0B" },
+    "header": { "fontSize": 12, "fontFace": "Segoe UI Semibold", "color": "#0B0B0B" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [{
+          "show": true,
+          "fontFamily": "'Segoe UI Semibold', 'Segoe UI', sans-serif",
+          "fontSize": 13,
+          "fontColor": { "solid": { "color": "#0B0B0B" } }
+        }],
+        "background": [{ "show": true, "color": { "solid": { "color": "#FCFCFB" } }, "transparency": 0 }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#E1E0D9" } }, "radius": 12 }]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [{ "color": { "solid": { "color": "#184F95" } }, "fontSize": 28, "fontFamily": "'Segoe UI Semibold', sans-serif" }],
+        "categoryLabels": [{ "color": { "solid": { "color": "#52514E" } }, "fontSize": 11 }]
+      }
+    },
+    "clusteredBarChart": {
+      "*": {
+        "dataPoint": [{ "fill": { "solid": { "color": "#2A78D6" } } }]
+      }
+    },
+    "clusteredColumnChart": {
+      "*": {
+        "dataPoint": [{ "fill": { "solid": { "color": "#2A78D6" } } }]
+      }
+    },
+    "lineChart": {
+      "*": {
+        "dataPoint": [{ "fill": { "solid": { "color": "#2A78D6" } } }]
+      }
+    }
+  }
+}

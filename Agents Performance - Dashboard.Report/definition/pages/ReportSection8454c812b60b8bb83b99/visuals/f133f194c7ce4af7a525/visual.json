@@ -1,0 +1,96 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "f133f194c7ce4af7a525",
+  "position": {
+    "x": 40,
+    "y": 960,
+    "z": 1000,
+    "height": 460,
+    "width": 1840,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionByCountry"
+                    }
+                  },
+                  "Property": "Country"
+                }
+              },
+              "queryRef": "AIAdoptionByCountry.Country",
+              "nativeQueryRef": "Country"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "AIAdoptionByCountry"
+                    }
+                  },
+                  "Property": "Country Enterprise Adoption %"
+                }
+              },
+              "queryRef": "AIAdoptionByCountry.Country Enterprise Adoption %",
+              "nativeQueryRef": "Country Enterprise Adoption %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "AIAdoptionByCountry"
+                  }
+                },
+                "Property": "Country Enterprise Adoption %"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {},
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Which member states lead (enterprise adoption by country, 2025)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

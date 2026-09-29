@@ -1,0 +1,90 @@
+/// Share of individuals using generative AI tools, by purpose (private/work/education) and country, 2025. Source: Eurostat isoc_ai_iaiu.
+table GenAIUseByCountry
+	lineageTag: c0827c04-37f8-4c06-bd6d-f05530a71431
+
+	/// Share of generative-AI users who use it for professional/work purposes, 2025.
+	measure 'Uses GenAI for Work %' = SUM ( GenAIUseByCountry[PctUsedForProfessionalWorkPurposes] )
+		formatString: 0.0"%"
+		lineageTag: d50f77da-52f4-401d-bf7b-09cffaf2f077
+
+	/// Share of generative-AI users who use it for private purposes, 2025.
+	measure 'Uses GenAI Privately %' = SUM ( GenAIUseByCountry[PctUsedForPrivatePurposes] )
+		formatString: 0.0"%"
+		lineageTag: 8705d3ed-9032-434c-957d-96ebdd416137
+
+	/// Share of generative-AI users who use it for formal education, 2025.
+	measure 'Uses GenAI for Education %' = SUM ( GenAIUseByCountry[PctUsedForFormalEducation] )
+		formatString: 0.0"%"
+		lineageTag: 28c8a6c6-e911-4f4f-94b5-ba5dfe3b944e
+
+	column Country
+		dataType: string
+		lineageTag: 70806ae3-9d2d-421b-8395-818be0a568be
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column PctUsedForPrivatePurposes
+		dataType: decimal
+		isHidden
+		formatString: 0.0"%"
+		lineageTag: f76e2105-e5a7-458f-83a4-dca1f2660120
+		summarizeBy: none
+		sourceColumn: PctUsedForPrivatePurposes
+
+		annotation SummarizationSetBy = Automatic
+
+	column PctUsedForProfessionalWorkPurposes
+		dataType: decimal
+		isHidden
+		formatString: 0.0"%"
+		lineageTag: dcf20c44-ebbd-4e71-9d15-f1646f528362
+		summarizeBy: none
+		sourceColumn: PctUsedForProfessionalWorkPurposes
+
+		annotation SummarizationSetBy = Automatic
+
+	column PctUsedForFormalEducation
+		dataType: decimal
+		isHidden
+		formatString: 0.0"%"
+		lineageTag: defd1c7c-969c-47b8-8e0b-42e810f8cdbc
+		summarizeBy: none
+		sourceColumn: PctUsedForFormalEducation
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 57ea1c21-bf97-4f29-b3f4-631c848dc93a
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: e3e882de-d34f-4a05-b402-d387abc1f1b4
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	partition GenAIUseByCountry = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\GenAIUseByCountry.csv"),[Delimiter=",", Columns=6, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Country", type text}, {"PctUsedForPrivatePurposes", Currency.Type}, {"PctUsedForProfessionalWorkPurposes", Currency.Type}, {"PctUsedForFormalEducation", Currency.Type}, {"Year", Int64.Type}, {"Source", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

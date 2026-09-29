@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Adoption Europe</title>
+<meta name="description" content="EU AI adoption dashboard (Eurostat & European Commission data) with an internal AI-usage guidance summary.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --page:#f9f9f7;
+    --surface:#fcfcfb;
+    --surface-raised:#ffffff;
+    --text-primary:#0b0b0b;
+    --text-secondary:#52514e;
+    --muted:#898781;
+    --grid:#e1e0d9;
+    --baseline:#c3c2b7;
+    --border:rgba(11,11,11,0.10);
+    --blue:#2a78d6;
+    --blue-dark:#184f95;
+    --blue-wash:#e8f0fb;
+    --orange:#eb6834;
+    --aqua:#1baf7a;
+    --gold:#eda100;
+    --gold-wash:#fdf1dc;
+    --good:#0ca30c;
+    --warning:#fab219;
+    --serious:#ec835a;
+    --critical:#d03b3b;
+    --good-wash:#e7f7e7;
+    --warning-wash:#fff6e2;
+    --critical-wash:#fbe9e9;
+    --shadow: 0 1px 2px rgba(11,11,11,0.04), 0 8px 24px -12px rgba(11,11,11,0.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:#0d0d0d;
+      --surface:#1a1a19;
+      --surface-raised:#212120;
+      --text-primary:#ffffff;
+      --text-secondary:#c3c2b7;
+      --muted:#8f8d86;
+      --grid:#2c2c2a;
+      --baseline:#383835;
+      --border:rgba(255,255,255,0.10);
+      --blue:#3987e5;
+      --blue-dark:#86b6ef;
+      --blue-wash:#152a3f;
+      --orange:#d95926;
+      --aqua:#199e70;
+      --gold:#c98500;
+      --gold-wash:#2a2213;
+      --good:#0ca30c;
+      --warning:#fab219;
+      --serious:#ec835a;
+      --critical:#e66767;
+      --good-wash:#122a12;
+      --warning-wash:#332a10;
+      --critical-wash:#331616;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:#0d0d0d;
+    --surface:#1a1a19;
+    --surface-raised:#212120;
+    --text-primary:#ffffff;
+    --text-secondary:#c3c2b7;
+    --muted:#8f8d86;
+    --grid:#2c2c2a;
+    --baseline:#383835;
+    --border:rgba(255,255,255,0.10);
+    --blue:#3987e5;
+    --blue-dark:#86b6ef;
+    --blue-wash:#152a3f;
+    --orange:#d95926;
+    --aqua:#199e70;
+    --gold:#c98500;
+    --gold-wash:#2a2213;
+    --good:#0ca30c;
+    --warning:#fab219;
+    --serious:#ec835a;
+    --critical:#e66767;
+    --good-wash:#122a12;
+    --warning-wash:#332a10;
+    --critical-wash:#331616;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--page);
+    color:var(--text-primary);
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding-inline:24px;
+    padding-block:40px 64px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  .eyebrow{
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--blue);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eu-dots{width:16px;height:16px;flex:none;}
+  .eu-dots circle{fill:var(--gold);}
+
+  h1{
+    font-family:Newsreader,Georgia,serif;
+    font-weight:600;
+    font-size:clamp(32px,4.4vw,52px);
+    line-height:1.04;
+    letter-spacing:-0.01em;
+    margin:10px 0 14px;
+    text-wrap:balance;
+    color:var(--text-primary);
+  }
+  .lede{
+    font-size:16.5px;
+    line-height:1.55;
+    color:var(--text-secondary);
+    max-width:62ch;
+    margin:0 0 6px;
+  }
+  .updated{
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid var(--border);
+  }
+
+  header.report-head{margin-bottom:40px;}
+
+  section{margin-top:52px;}
+  section:first-of-type{margin-top:44px;}
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .section-title{
+    font-family:Newsreader,Georgia,serif;
+    font-weight:600;
+    font-size:23px;
+    letter-spacing:-0.005em;
+  }
+  .section-sub{
+    font-size:13px;
+    color:var(--muted);
+    max-width:46ch;
+  }
+  .source-tag{
+    font-size:11px;
+    color:var(--muted);
+    white-space:nowrap;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- KPI row ---------- */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  .kpi{
+    background:var(--surface-raised);
+    padding:20px 18px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:0;
+  }
+  .kpi-label{
+    font-size:11.5px;
+    color:var(--muted);
+    line-height:1.35;
+    min-height:29px;
+  }
+  .kpi-value{
+    font-family:Newsreader,Georgia,serif;
+    font-size:34px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    color:var(--text-primary);
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+  }
+  .kpi-unit{font-size:15px;color:var(--text-secondary);font-family:Inter,sans-serif;font-weight:500;}
+  .kpi-delta{
+    font-size:12px;
+    font-weight:600;
+    color:var(--good);
+    font-variant-numeric:tabular-nums;
+  }
+  .kpi-spark{width:100%;height:28px;margin-top:2px;display:block;}
+
+  @media (max-width:900px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:520px){
+    .kpi-row{grid-template-columns:1fr;}
+  }
+
+  /* ---------- panel ---------- */
+  .panel{
+    background:var(--surface-raised);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:24px 26px 22px;
+    box-shadow:var(--shadow);
+  }
+
+  .two-col{
+    display:grid;
+    grid-template-columns:1.6fr 1fr;
+    gap:20px;
+    align-items:stretch;
+  }
+  @media (max-width:820px){ .two-col{grid-template-columns:1fr;} }
+
+  /* ---------- trend line chart ---------- */
+  .trend-figure{width:100%;height:220px;}
+  .trend-figure .line{fill:none;stroke:var(--blue);stroke-width:2.5;}
+  .trend-figure .area{fill:url(#trendFill);}
+  .trend-figure .grid-line{stroke:var(--grid);stroke-width:1;}
+  .trend-figure .dot{fill:var(--surface-raised);stroke:var(--blue);stroke-width:2.5;}
+  .trend-figure .dot-end{fill:var(--blue);}
+  .trend-figure text{font-family:Inter,sans-serif;fill:var(--muted);font-size:11px;}
+  .trend-figure .val-label{fill:var(--text-primary);font-weight:600;font-size:12.5px;font-variant-numeric:tabular-nums;}
+
+  /* ---------- size comparison mini bars ---------- */
+  .size-list{display:flex;flex-direction:column;gap:14px;height:100%;justify-content:center;}
+  .size-row{display:flex;flex-direction:column;gap:5px;}
+  .size-top{display:flex;justify-content:space-between;font-size:13px;}
+  .size-name{color:var(--text-secondary);font-weight:500;}
+  .size-val{font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);}
+  .size-track{background:var(--grid);border-radius:5px;height:10px;overflow:hidden;}
+  .size-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--blue-dark),var(--blue));}
+
+  /* ---------- horizontal bar chart (functions / sector / country) ---------- */
+  .hbar-chart{display:flex;flex-direction:column;gap:11px;}
+  .hbar-row{
+    display:grid;
+    grid-template-columns:200px 1fr 56px;
+    align-items:center;
+    gap:12px;
+  }
+  .hbar-row.dense{grid-template-columns:150px 1fr 46px;gap:10px;}
+  .hbar-label{
+    font-size:13px;
+    color:var(--text-secondary);
+    text-align:right;
+    line-height:1.25;
+  }
+  .hbar-row.dense .hbar-label{font-size:12px;}
+  .hbar-track{
+    position:relative;
+    background:var(--grid);
+    border-radius:4px;
+    height:16px;
+    overflow:visible;
+  }
+  .hbar-row.dense .hbar-track{height:11px;}
+  .hbar-fill{
+    height:100%;
+    border-radius:4px;
+    background:linear-gradient(90deg,var(--blue-dark),var(--blue));
+    transition:filter .15s ease;
+  }
+  .hbar-row:hover .hbar-fill{filter:brightness(1.08);}
+  .hbar-fill.top{background:linear-gradient(90deg,var(--blue-dark),var(--gold));}
+  .hbar-val{
+    font-size:12.5px;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    color:var(--text-primary);
+  }
+  .hbar-row.dense .hbar-val{font-size:11.5px;font-weight:600;}
+  .eu-avg-note{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:11.5px;
+    color:var(--muted);
+    margin-top:6px;
+    padding-top:12px;
+    border-top:1px dashed var(--baseline);
+  }
+  .eu-avg-swatch{width:14px;height:0;border-top:2px dashed var(--gold);}
+
+  /* ---------- occupation cards ---------- */
+  .occ-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:820px){ .occ-grid{grid-template-columns:1fr;} }
+  .occ-card{
+    background:var(--surface-raised);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px 20px 18px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .occ-title{font-size:14px;font-weight:700;line-height:1.3;min-height:37px;}
+  .occ-hours{
+    font-family:Newsreader,Georgia,serif;
+    font-size:38px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .occ-hours span{font-size:14px;font-family:Inter,sans-serif;font-weight:500;color:var(--text-secondary);}
+  .occ-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.5;flex:1;}
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:11.5px;
+    font-weight:700;
+    padding:5px 10px;
+    border-radius:999px;
+    width:fit-content;
+    letter-spacing:.01em;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;}
+  .chip.good{background:var(--good-wash);color:var(--good);}
+  .chip.good .dot{background:var(--good);}
+  .chip.warning{background:var(--warning-wash);color:#8a5a00;}
+  .chip.warning .dot{background:var(--warning);}
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .chip.warning{color:var(--warning);} }
+  :root[data-theme="dark"] .chip.warning{color:var(--warning);}
+  .chip.critical{background:var(--critical-wash);color:var(--critical);}
+  .chip.critical .dot{background:var(--critical);}
+
+  /* ---------- genai purpose bars ---------- */
+  .purpose-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:700px){ .purpose-grid{grid-template-columns:1fr;} }
+  .purpose-card{text-align:left;}
+  .purpose-name{font-size:12.5px;color:var(--text-secondary);font-weight:600;margin-bottom:8px;}
+  .purpose-value{
+    font-family:Newsreader,Georgia,serif;
+    font-size:30px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    margin-bottom:8px;
+  }
+  .purpose-track{background:var(--grid);border-radius:5px;height:8px;overflow:hidden;}
+  .purpose-fill{height:100%;border-radius:5px;}
+
+  /* ---------- guidance section ---------- */
+  .term-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  @media (max-width:900px){ .term-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .term-grid{grid-template-columns:1fr;} }
+  .term-card{
+    background:var(--surface-raised);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 16px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .term-name{font-size:13px;font-weight:700;color:var(--blue);}
+  .term-desc{font-size:12px;line-height:1.5;color:var(--text-secondary);}
+
+  .tiers-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  .tiers-table th, .tiers-table td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+  }
+  .tiers-table th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+  .tiers-table td:first-child, .tiers-table th:first-child{color:var(--text-secondary);font-weight:500;}
+  .tiers-table td.enterprise-col{color:var(--text-primary);font-weight:600;}
+
+  .share-example{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    align-items:center;
+  }
+  @media (max-width:760px){ .share-example{grid-template-columns:1fr;} }
+  .never-box{
+    background:var(--critical-wash);
+    border-radius:12px;
+    padding:18px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .never-label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--critical);}
+  .never-code{
+    font-family:'Courier New',monospace;
+    font-size:12.5px;
+    line-height:1.7;
+    color:var(--text-primary);
+    white-space:pre;
+  }
+  .fix-box{
+    background:var(--good-wash);
+    border-radius:12px;
+    padding:18px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .fix-label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--good);}
+  .fix-code{
+    font-family:'Courier New',monospace;
+    font-size:12.5px;
+    line-height:1.7;
+    color:var(--text-primary);
+    white-space:pre;
+  }
+  .rule-line{font-size:12.5px;color:var(--text-secondary);margin-top:4px;}
+
+  .tip-callout{
+    background:var(--blue-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--text-primary);
+    margin-top:16px;
+  }
+  .tip-callout b{color:var(--blue-dark);}
+
+  footer{
+    margin-top:60px;
+    padding-top:22px;
+    border-top:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  footer .src{font-size:11.5px;color:var(--muted);line-height:1.6;max-width:80ch;}
+  footer .src b{color:var(--text-secondary);font-weight:600;}
+  .badge-note{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:11.5px;
+    color:var(--muted);
+    background:var(--surface-raised);
+    border:1px solid var(--border);
+    padding:8px 12px;
+    border-radius:10px;
+    width:fit-content;
+  }
+  .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="report-head">
+    <div class="eyebrow">
+      <svg class="eu-dots" viewBox="0 0 16 16" aria-hidden="true">
+        <circle cx="8" cy="1.4" r="1.1"/><circle cx="12.9" cy="3.1" r="1.1"/><circle cx="14.6" cy="8" r="1.1"/>
+        <circle cx="12.9" cy="12.9" r="1.1"/><circle cx="8" cy="14.6" r="1.1"/><circle cx="3.1" cy="12.9" r="1.1"/>
+        <circle cx="1.4" cy="8" r="1.1"/><circle cx="3.1" cy="3.1" r="1.1"/>
+      </svg>
+      Eurostat &amp; European Commission
+    </div>
+    <h1>AI adoption in the workplace, across the EU</h1>
+    <p class="lede">Enterprise uptake, the business functions AI has reached first, and the workers reporting the
+      biggest time savings — drawn from Eurostat's ICT usage survey and the European Commission's Spring 2026
+      Economic Forecast.</p>
+    <div class="updated">Reference years 2025 (enterprise &amp; individual use) and 2026 (occupation survey) · Compiled 29 September 2026</div>
+  </header>
+
+  <!-- KPI ROW -->
+  <section>
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">EU enterprises using AI, 2025</div>
+        <div class="kpi-value">19.95<span class="kpi-unit">%</span></div>
+        <div class="kpi-delta">&#9650; 6.5 pp vs. 2024</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">EU individuals using AI (any use)</div>
+        <div class="kpi-value">54<span class="kpi-unit">%</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Use AI specifically for work</div>
+        <div class="kpi-value">27<span class="kpi-unit">%</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Report faster task completion</div>
+        <div class="kpi-value">91<span class="kpi-unit">%</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Avg. hours saved per month at work</div>
+        <div class="kpi-value">7.4<span class="kpi-unit">hrs</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TREND + SIZE -->
+  <section>
+    <div class="two-col">
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Enterprise adoption is accelerating</div>
+            <div class="section-sub">Share of EU enterprises (10+ employees) using AI technologies</div>
+          </div>
+          <div class="source-tag">Eurostat isoc_eb_ai</div>
+        </div>
+        <svg class="trend-figure" viewBox="0 0 620 220" preserveAspectRatio="none" role="img" aria-label="EU enterprise AI adoption rose from 7.65% in 2021 to 19.95% in 2025">
+          <defs>
+            <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--blue)" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="var(--blue)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- gridlines at 0,5,10,15,20 -->
+          <line class="grid-line" x1="40" y1="170" x2="600" y2="170"/>
+          <line class="grid-line" x1="40" y1="128" x2="600" y2="128"/>
+          <line class="grid-line" x1="40" y1="86" x2="600" y2="86"/>
+          <line class="grid-line" x1="40" y1="44" x2="600" y2="44"/>
+          <text x="30" y="174" text-anchor="end">0%</text>
+          <text x="30" y="132" text-anchor="end">5%</text>
+          <text x="30" y="90" text-anchor="end">10%</text>
+          <text x="30" y="48" text-anchor="end">15%</text>
+          <!-- x: 2021->x=70 ; 2023->x=270 ; 2024->x=420 ; 2025->x=580  y = 170 - pct*8.4 -->
+          <path class="area" d="M70,105.7 L270,102.3 L420,56.7 L580,3.6 L580,170 L70,170 Z"/>
+          <path class="line" d="M70,105.7 L270,102.3 L420,56.7 L580,3.6"/>
+          <circle class="dot" cx="70" cy="105.7" r="4"><title>2021: 7.65%</title></circle>
+          <circle class="dot" cx="270" cy="102.3" r="4"><title>2023: 8.06%</title></circle>
+          <circle class="dot" cx="420" cy="56.7" r="4"><title>2024: 13.48%</title></circle>
+          <circle class="dot dot-end" cx="580" cy="3.6" r="5"><title>2025: 19.95%</title></circle>
+          <text x="70" y="196" text-anchor="middle">2021</text>
+          <text x="270" y="196" text-anchor="middle">2023</text>
+          <text x="420" y="196" text-anchor="middle">2024</text>
+          <text x="580" y="196" text-anchor="middle">2025</text>
+          <text class="val-label" x="70" y="122" text-anchor="middle">7.7%</text>
+          <text class="val-label" x="270" y="118" text-anchor="middle">8.1%</text>
+          <text class="val-label" x="420" y="42" text-anchor="middle">13.5%</text>
+          <text class="val-label" x="540" y="20" text-anchor="middle">20.0%</text>
+        </svg>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Size matters</div>
+            <div class="section-sub">Adoption by employee headcount, 2025</div>
+          </div>
+        </div>
+        <div class="size-list">
+          <div class="size-row">
+            <div class="size-top"><span class="size-name">Large, 250+ staff</span><span class="size-val">55.0%</span></div>
+            <div class="size-track"><div class="size-fill" style="width:100%"></div></div>
+          </div>
+          <div class="size-row">
+            <div class="size-top"><span class="size-name">Medium, 50&ndash;249</span><span class="size-val">30.4%</span></div>
+            <div class="size-track"><div class="size-fill" style="width:55.2%"></div></div>
+          </div>
+          <div class="size-row">
+            <div class="size-top"><span class="size-name">Small, 10&ndash;49</span><span class="size-val">17.0%</span></div>
+            <div class="size-track"><div class="size-fill" style="width:30.9%"></div></div>
+          </div>
+          <div class="size-row">
+            <div class="size-top"><span class="size-name" style="font-weight:700;color:var(--text-primary)">All enterprises</span><span class="size-val">20.0%</span></div>
+            <div class="size-track"><div class="size-fill" style="width:36.3%;background:linear-gradient(90deg,var(--gold),var(--gold))"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSINESS FUNCTION -->
+  <section>
+    <div class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Where in the business AI has landed first</div>
+          <div class="section-sub">Share of AI-using enterprises applying it to each function, all sizes, 2025</div>
+        </div>
+        <div class="source-tag">Eurostat isoc_eb_ai</div>
+      </div>
+      <div class="hbar-chart">
+        <div class="hbar-row"><div class="hbar-label">Marketing or sales</div><div class="hbar-track"><div class="hbar-fill top" style="width:100%"></div></div><div class="hbar-val">34.7%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Business administration or management</div><div class="hbar-track"><div class="hbar-fill" style="width:89.5%"></div></div><div class="hbar-val">31.0%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Accounting, controlling or finance</div><div class="hbar-track"><div class="hbar-fill" style="width:66.6%"></div></div><div class="hbar-val">23.1%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Production processes</div><div class="hbar-track"><div class="hbar-fill" style="width:59.8%"></div></div><div class="hbar-val">20.8%</div></div>
+        <div class="hbar-row"><div class="hbar-label">ICT security</div><div class="hbar-track"><div class="hbar-fill" style="width:57.0%"></div></div><div class="hbar-val">19.8%</div></div>
+        <div class="hbar-row"><div class="hbar-label">R&amp;D or innovation</div><div class="hbar-track"><div class="hbar-fill" style="width:54.9%"></div></div><div class="hbar-val">19.1%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Logistics</div><div class="hbar-track"><div class="hbar-fill" style="width:17.5%"></div></div><div class="hbar-val">6.1%</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTOR -->
+  <section>
+    <div class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Adoption across the economy</div>
+          <div class="section-sub">Share of enterprises using AI, by economic sector, 2025</div>
+        </div>
+        <div class="source-tag">Eurostat isoc_eb_ain2</div>
+      </div>
+      <div class="hbar-chart">
+        <div class="hbar-row"><div class="hbar-label">Information &amp; communication</div><div class="hbar-track"><div class="hbar-fill top" style="width:100%"></div></div><div class="hbar-val">62.5%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Professional, scientific &amp; technical</div><div class="hbar-track"><div class="hbar-fill" style="width:64.7%"></div></div><div class="hbar-val">40.4%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Real estate activities</div><div class="hbar-track"><div class="hbar-fill" style="width:39.6%"></div></div><div class="hbar-val">24.8%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Administrative &amp; support services</div><div class="hbar-track"><div class="hbar-fill" style="width:31.8%"></div></div><div class="hbar-val">19.9%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Wholesale &amp; retail trade</div><div class="hbar-track"><div class="hbar-fill" style="width:29.8%"></div></div><div class="hbar-val">18.6%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Manufacturing</div><div class="hbar-track"><div class="hbar-fill" style="width:27.6%"></div></div><div class="hbar-val">17.3%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Accommodation &amp; food service</div><div class="hbar-track"><div class="hbar-fill" style="width:19.2%"></div></div><div class="hbar-val">12.0%</div></div>
+        <div class="hbar-row"><div class="hbar-label">Construction</div><div class="hbar-track"><div class="hbar-fill" style="width:17.3%"></div></div><div class="hbar-val">10.8%</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COUNTRY -->
+  <section>
+    <div class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Which member states lead</div>
+          <div class="section-sub">Enterprise AI adoption by country, 2025, ranked high to low</div>
+        </div>
+        <div class="source-tag">Eurostat isoc_eb_ai</div>
+      </div>
+      <div class="hbar-chart" id="country-chart">
+        <div class="hbar-row dense"><div class="hbar-label">Denmark</div><div class="hbar-track"><div class="hbar-fill top" style="width:100%"></div></div><div class="hbar-val">42.0%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Finland</div><div class="hbar-track"><div class="hbar-fill" style="width:90.0%"></div></div><div class="hbar-val">37.8%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Sweden</div><div class="hbar-track"><div class="hbar-fill" style="width:83.4%"></div></div><div class="hbar-val">35.0%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Belgium</div><div class="hbar-track"><div class="hbar-fill" style="width:82.2%"></div></div><div class="hbar-val">34.5%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Luxembourg</div><div class="hbar-track"><div class="hbar-fill" style="width:80.0%"></div></div><div class="hbar-val">33.6%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Netherlands</div><div class="hbar-track"><div class="hbar-fill" style="width:79.0%"></div></div><div class="hbar-val">33.2%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Austria</div><div class="hbar-track"><div class="hbar-fill" style="width:71.3%"></div></div><div class="hbar-val">30.0%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Germany</div><div class="hbar-track"><div class="hbar-fill" style="width:61.8%"></div></div><div class="hbar-val">26.0%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Slovenia</div><div class="hbar-track"><div class="hbar-fill" style="width:51.4%"></div></div><div class="hbar-val">21.6%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Malta</div><div class="hbar-track"><div class="hbar-fill" style="width:51.2%"></div></div><div class="hbar-val">21.5%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Lithuania</div><div class="hbar-track"><div class="hbar-fill" style="width:50.7%"></div></div><div class="hbar-val">21.3%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Estonia</div><div class="hbar-track"><div class="hbar-fill" style="width:55.7%"></div></div><div class="hbar-val">23.4%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Spain</div><div class="hbar-track"><div class="hbar-fill" style="width:48.2%"></div></div><div class="hbar-val">20.3%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Ireland</div><div class="hbar-track"><div class="hbar-fill" style="width:46.7%"></div></div><div class="hbar-val">19.6%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">France</div><div class="hbar-track"><div class="hbar-fill" style="width:43.2%"></div></div><div class="hbar-val">18.2%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Slovakia</div><div class="hbar-track"><div class="hbar-fill" style="width:42.8%"></div></div><div class="hbar-val">18.0%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Italy</div><div class="hbar-track"><div class="hbar-fill" style="width:39.0%"></div></div><div class="hbar-val">16.4%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Croatia</div><div class="hbar-track"><div class="hbar-fill" style="width:36.1%"></div></div><div class="hbar-val">15.2%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Portugal</div><div class="hbar-track"><div class="hbar-fill" style="width:27.5%"></div></div><div class="hbar-val">11.5%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Latvia</div><div class="hbar-track"><div class="hbar-fill" style="width:29.1%"></div></div><div class="hbar-val">12.2%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Hungary</div><div class="hbar-track"><div class="hbar-fill" style="width:24.7%"></div></div><div class="hbar-val">10.4%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Czechia</div><div class="hbar-track"><div class="hbar-fill" style="width:41.9%"></div></div><div class="hbar-val">17.6%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Romania</div><div class="hbar-track"><div class="hbar-fill" style="width:12.4%"></div></div><div class="hbar-val">5.2%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Cyprus</div><div class="hbar-track"><div class="hbar-fill" style="width:22.1%"></div></div><div class="hbar-val">9.3%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Greece</div><div class="hbar-track"><div class="hbar-fill" style="width:21.2%"></div></div><div class="hbar-val">8.9%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Bulgaria</div><div class="hbar-track"><div class="hbar-fill" style="width:20.4%"></div></div><div class="hbar-val">8.6%</div></div>
+        <div class="hbar-row dense"><div class="hbar-label">Poland</div><div class="hbar-track"><div class="hbar-fill" style="width:19.9%"></div></div><div class="hbar-val">8.4%</div></div>
+      </div>
+      <div class="eu-avg-note"><span class="eu-avg-swatch"></span> EU-27 average: 20.0% &mdash; gold bar marks the top-ranked country, Denmark</div>
+    </div>
+  </section>
+
+  <!-- OCCUPATION -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="section-title">Who benefits most at work</div>
+        <div class="section-sub">Monthly hours saved from AI use, by occupation group &mdash; EC Spring 2026 Forecast, n=21,207 across 18 member states + 4 candidates</div>
+      </div>
+    </div>
+    <div class="occ-grid">
+      <div class="occ-card">
+        <div class="occ-title">Managers &amp; professionals</div>
+        <div class="occ-hours">8.5 <span>hrs / month</span></div>
+        <div class="chip good"><span class="dot"></span>Lower displacement concern</div>
+        <div class="occ-desc">Highest work-related AI adoption of any group, and the largest share reporting a
+          major productivity gain.</div>
+      </div>
+      <div class="occ-card">
+        <div class="occ-title">Plant &amp; machine operators, elementary occupations</div>
+        <div class="occ-hours">8.3 <span>hrs / month</span></div>
+        <div class="chip critical"><span class="dot"></span>Highest displacement concern</div>
+        <div class="occ-desc">Time savings nearly match managerial roles, but this group is the most worried
+          about AI replacing their job.</div>
+      </div>
+      <div class="occ-card">
+        <div class="occ-title">Students &amp; unpaid workers</div>
+        <div class="occ-hours">9.0 <span>hrs / month</span></div>
+        <div class="chip warning"><span class="dot"></span>High displacement concern</div>
+        <div class="occ-desc">Largest time savings of any group &mdash; used mainly for study and job hunting rather
+          than paid work. 41% report a quality improvement, 18% report none.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENAI PURPOSE -->
+  <section>
+    <div class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">How EU generative-AI users spend it</div>
+          <div class="section-sub">Share of generative-AI users, by purpose &mdash; EU-27 aggregate, 2025</div>
+        </div>
+        <div class="source-tag">Eurostat isoc_ai_iaiu</div>
+      </div>
+      <div class="purpose-grid">
+        <div class="purpose-card">
+          <div class="purpose-name">Private purposes</div>
+          <div class="purpose-value" style="color:var(--blue)">78.0%</div>
+          <div class="purpose-track"><div class="purpose-fill" style="width:78.0%;background:var(--blue)"></div></div>
+        </div>
+        <div class="purpose-card">
+          <div class="purpose-name">Professional / work purposes</div>
+          <div class="purpose-value" style="color:var(--orange)">47.0%</div>
+          <div class="purpose-track"><div class="purpose-fill" style="width:47.0%;background:var(--orange)"></div></div>
+        </div>
+        <div class="purpose-card">
+          <div class="purpose-name">Formal education</div>
+          <div class="purpose-value" style="color:var(--aqua)">28.5%</div>
+          <div class="purpose-track"><div class="purpose-fill" style="width:28.5%;background:var(--aqua)"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USING AI SAFELY AT WORK -->
+  <section>
+    <div class="section-head">
+      <div>
+        <div class="section-title">Using AI safely at work</div>
+        <div class="section-sub">The adoption numbers above are only half the story &mdash; a short internal guide on how to use these tools without leaking anything you shouldn't</div>
+      </div>
+    </div>
+
+    <div class="term-grid">
+      <div class="term-card">
+        <div class="term-name">AI model ("LLM")</div>
+        <div class="term-desc">The engine behind chat tools. Trained on huge amounts of text to guess a good next answer &mdash; it doesn't know things the way a person does.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Prompt</div>
+        <div class="term-desc">Just what you type in. A better prompt gets a better answer.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">Training data</div>
+        <div class="term-desc">Everything a model has learned from. On some accounts, what you type today can shape tomorrow's version of the model.</div>
+      </div>
+      <div class="term-card">
+        <div class="term-name">AI hallucination</div>
+        <div class="term-desc">When it states something false with total confidence &mdash; a rule, a source, that simply doesn't exist. Always check anything factual before you rely on it.</div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px;">
+      <div class="section-head">
+        <div>
+          <div class="section-title" style="font-size:18px;">Free, paid, and business accounts are different contracts</div>
+          <div class="section-sub">Not three price points on the same thing</div>
+        </div>
+      </div>
+      <table class="tiers-table">
+        <thead>
+          <tr><th></th><th>Personal (free)</th><th>Personal (paid)</th><th>Business / enterprise</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Trains the model on what you type?</td><td>On by default</td><td>On by default</td><td class="enterprise-col">No, by default</td></tr>
+          <tr><td>Who can see it</td><td>The provider</td><td>The provider</td><td class="enterprise-col">Us &mdash; access is contractually limited</td></tr>
+          <tr><td>Data deletion on request</td><td>Rarely</td><td>Sometimes</td><td class="enterprise-col">Yes, configurable</td></tr>
+          <tr><td>Company can manage the account?</td><td>No</td><td>No</td><td class="enterprise-col">Admin controls, company sign-in</td></tr>
+        </tbody>
+      </table>
+      <div class="rule-line">A paid personal subscription buys you a faster, better tool &mdash; it doesn't buy you privacy.</div>
+    </div>
+
+    <div class="panel" style="margin-top:16px;">
+      <div class="section-head">
+        <div>
+          <div class="section-title" style="font-size:18px;">Examples of what not to share</div>
+          <div class="section-sub">Take out the who, keep the what &mdash; names, account numbers and exact amounts come out; the actual problem stays in</div>
+        </div>
+      </div>
+      <div class="share-example">
+        <div class="never-box">
+          <div class="never-label">NEVER PASTE THIS</div>
+          <div class="never-code">Client:    Jane Doe, Acme Holdings Ltd
+Account:   88-4471-02
+Amount:    EUR 41,220, due 14 Mar
+Login:     j.doe / &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</div>
+        </div>
+        <div class="fix-box">
+          <div class="fix-label">SHARE THIS INSTEAD</div>
+          <div class="fix-code">"A client's payment of roughly
+EUR 40k is 2 weeks overdue.
+What's a firm but professional
+follow-up email?"</div>
+        </div>
+      </div>
+      <div class="tip-callout"><b>Reduce hallucinations by asking for it:</b> "Always tell me where this comes from. If you don't have a real source, or you're not sure, say so instead of guessing."</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="badge-note"><span class="badge-dot"></span>Case study: EU adoption data (Eurostat / European Commission) rebuilt as a Power BI report, paired with an internal AI-usage guide</div>
+    <div class="src"><b>Sources.</b> Eurostat, "Use of artificial intelligence in enterprises" (datasets isoc_eb_ai,
+      isoc_eb_ain2), 2025 reference year, published 11 Dec 2025 &mdash; EU survey on ICT usage and e-commerce in
+      enterprises, 10+ employees. Eurostat, "Individuals: use of generative AI tools" (isoc_ai_iaiu), 2025 reference
+      year, last updated 5 Jun 2026. European Commission, Directorate-General for Economic and Financial Affairs,
+      "The AI-adoption divide: who benefits, who doesn't, and what it means for workers," Spring 2026 Economic
+      Forecast &mdash; ad-hoc module of the EC's monthly consumer survey, fieldwork Feb&ndash;Mar 2026, 21,207
+      responses across 18 EU member states (69% of EU population) and 4 candidate countries. "Using AI at Work" &mdash;
+      internal guidance deck on safe day-to-day use of AI chat tools.</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

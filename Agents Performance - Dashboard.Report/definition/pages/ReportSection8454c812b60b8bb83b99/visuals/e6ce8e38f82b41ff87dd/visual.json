@@ -1,0 +1,41 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "e6ce8e38f82b41ff87dd",
+  "position": {
+    "x": 40,
+    "y": 20,
+    "z": 5000,
+    "height": 46,
+    "width": 1200,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRunsCollection": [
+                  {
+                    "textRunsCollection": [
+                      {
+                        "value": "AI Adoption in the Workplace, Across the EU",
+                        "textStyle": {
+                          "fontSize": "26px",
+                          "fontWeight": "bold",
+                          "color": "#0B0B0B"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
