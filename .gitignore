@@ -1,2 +1,5 @@
 **/.pbi/localSettings.json
 **/.pbi/cache.abf
+~$*.pptx
+~$*.docx
+~$*.xlsx
