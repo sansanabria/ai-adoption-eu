@@ -1,4 +1,4 @@
-# Who's actually using AI at work in Europe? — an EU Power BI case study
+# Who's actually using AI at work in Europe? 
 
 An end-to-end BI project: sourcing official EU statistics on AI adoption at work, modeling them in a Power BI semantic model, building a report, and prototyping the same story as a standalone HTML dashboard — paired with a "using AI safely at work" guidance deck.
 
