@@ -40,7 +40,7 @@ table AIAdoptionByEducation
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionByEducation.csv"),[Delimiter=",", Columns=4, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Source = Csv.Document(File.Contents(DataFolder & "\AIAdoptionByEducation.csv"),[Delimiter=",", Columns=4, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"EducationLevel", type text}, {"RelativeWorkAIAdoption", type text}, {"Year", Int64.Type}, {"Source", type text}})
 				in

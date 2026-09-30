@@ -31,7 +31,7 @@ Eurostat figures were pulled directly from Eurostat's public API (dataset codes 
 - A small disconnected `# Measures` table for cross-table KPIs (latest adoption %, YoY growth, top country/function)
 - Report theme (`EUAdoption-*.json`) built from the same color palette as the HTML version
 
-**Known limitation:** the CSV import paths in the `.SemanticModel` TMDL files are absolute Windows paths (`C:\Users\...\Power BI\Data\...`). If you clone this repo, repoint each table's `File.Contents(...)` path in Power BI Desktop (Transform Data) before refreshing. A cleaner fix — a shared M parameter for the data folder path — is a good next improvement.
+**Setup after cloning:** every table reads its CSV through a single Power Query parameter, `DataFolder` (default `C:\path\to\ai-adoption-eu\Data`, a placeholder). Open `AI Adoption EU.pbip` in Power BI Desktop, go to *Home → Transform data → Manage parameters*, set `DataFolder` to the full path of this repo's `Data` folder, then *Close & Apply* and refresh. That one value is the only machine-specific setting in the model.
 
 ## HTML prototype
 

@@ -79,7 +79,7 @@ table AIAdoptionByOccupation
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionByOccupation.csv"),[Delimiter=",", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Source = Csv.Document(File.Contents(DataFolder & "\AIAdoptionByOccupation.csv"),[Delimiter=",", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"OccupationGroup", type text}, {"HoursSavedPerMonth", Currency.Type}, {"PctReportingQualityImprovement", Currency.Type}, {"PctReportingNoImprovement", Currency.Type}, {"DisplacementConcernLevel", type text}, {"Year", Int64.Type}, {"Source", type text}})
 				in

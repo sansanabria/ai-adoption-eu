@@ -73,7 +73,7 @@ table AIAdoptionOverallEU
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionOverallEU.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Source = Csv.Document(File.Contents(DataFolder & "\AIAdoptionOverallEU.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Metric", type text}, {"Value", Currency.Type}, {"Unit", type text}, {"Year", Int64.Type}, {"Source", type text}})
 				in

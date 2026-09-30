@@ -9,7 +9,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["# Measures","AIAdoptionTrendEU","AIAdoptionByCountry","AIAdoptionByEnterpriseSize","AIAdoptionByBusinessFunction","AIAdoptionBySector","GenAIUseByCountry","AIAdoptionByOccupation","AIAdoptionByEducation","AIAdoptionOverallEU"]
+annotation PBI_QueryOrder = ["DataFolder","# Measures","AIAdoptionTrendEU","AIAdoptionByCountry","AIAdoptionByEnterpriseSize","AIAdoptionByBusinessFunction","AIAdoptionBySector","GenAIUseByCountry","AIAdoptionByOccupation","AIAdoptionByEducation","AIAdoptionOverallEU"]
 
 annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
 

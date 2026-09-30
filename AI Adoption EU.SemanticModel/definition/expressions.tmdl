@@ -1,0 +1,5 @@
+/// Folder that holds the source CSVs (this repo's Data folder). Change it in Power BI Desktop: Transform data > Manage parameters.
+expression DataFolder = "C:\path\to\ai-adoption-eu\Data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 937fb842-3147-44ec-b0d3-0e5b9e93b084
+
+	annotation PBI_ResultType = Text

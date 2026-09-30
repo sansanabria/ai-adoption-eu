@@ -55,7 +55,7 @@ table AIAdoptionByBusinessFunction
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents("C:\Users\Sandra\Power BI\Data\AIAdoptionByBusinessFunction.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Source = Csv.Document(File.Contents(DataFolder & "\AIAdoptionByBusinessFunction.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
 				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"BusinessFunction", type text}, {"EnterpriseSize", type text}, {"PctOfAIUsingEnterprises", Currency.Type}, {"Year", Int64.Type}, {"Source", type text}})
 				in
