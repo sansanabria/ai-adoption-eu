@@ -2,7 +2,7 @@
 
 An end-to-end BI project: sourcing official EU statistics on AI adoption at work, modeling them in a Power BI semantic model, building a report, and prototyping the same story as a standalone HTML dashboard — paired with an internal "using AI safely at work" guidance deck.
 
-**Live dashboard (HTML prototype):** enable GitHub Pages on this repo (`Settings → Pages → Deploy from branch → /docs`) to serve it at `https://<username>.github.io/<repo>/`.
+**Live:** [dashboard](https://sansanabria.github.io/ai-adoption-eu/) · [AI-at-work slide deck](https://sansanabria.github.io/ai-adoption-eu/presentation.html) (GitHub Pages, served from `/docs`).
 
 ## What's in here
 

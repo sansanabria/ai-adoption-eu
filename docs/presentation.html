@@ -41,6 +41,7 @@
 
   /* Stage: 16:9 on wide screens, all sizes derive from --u (1% of stage width) */
   .stage{
+    --u:calc(min(100vw, (100vh - 110px) * 16 / 9) / 100);
     --u:1cqw;
     container-type:inline-size;
     width:min(100%, calc((100vh - 110px) * 16 / 9));
@@ -55,6 +56,7 @@
     font-size:calc(var(--u)*1.55);
   }
   .slide.active{display:flex}
+  .slide:focus{outline:none}
   .slide h2{font-size:calc(var(--u)*3.6)}
   .sub{color:var(--text-secondary); font-size:calc(var(--u)*1.8)}
   .eyebrow{font-size:calc(var(--u)*1.3); font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--blue)}
@@ -63,6 +65,7 @@
   .grid{display:grid; gap:calc(var(--u)*1.6); flex:1; min-height:0}
   .cols-2{grid-template-columns:1fr 1fr}
   .cols-3{grid-template-columns:repeat(3,1fr)}
+  .rows-3{grid-template-rows:1fr 1fr 1fr}
   .card{
     background:var(--surface-raised); border:1px solid var(--border);
     border-radius:calc(var(--u)*1); padding:calc(var(--u)*1.8); display:flex; flex-direction:column; gap:calc(var(--u)*.8);
@@ -105,8 +108,8 @@
 
   /* Table */
   table{width:100%; border-collapse:collapse; background:var(--surface-raised); border-radius:calc(var(--u)*1); overflow:hidden;
-    border:1px solid var(--border); font-size:calc(var(--u)*1.5)}
-  th,td{padding:calc(var(--u)*1) calc(var(--u)*1.4); text-align:left; border-bottom:1px solid var(--grid); vertical-align:top}
+    border:1px solid var(--border); font-size:calc(var(--u)*1.4)}
+  th,td{padding:calc(var(--u)*.8) calc(var(--u)*1.4); text-align:left; border-bottom:1px solid var(--grid); vertical-align:top}
   thead th{background:var(--blue-wash); color:var(--blue-dark); font-weight:600}
   tbody th{font-weight:600; width:26%}
   tbody tr:last-child>*{border-bottom:0}
@@ -136,24 +139,30 @@
   /* Phones: drop 16:9, let each slide scroll */
   @media (max-width:760px){
     body{overflow:auto; justify-content:flex-start}
-    .stage{--u:4.6px; width:100%; aspect-ratio:auto; height:calc(100vh - 100px); min-height:420px}
+    .stage{--u:4.6px; width:100%; aspect-ratio:auto; height:calc(100vh - 100px); height:calc(100dvh - 100px); min-height:420px}
     .slide{overflow-y:auto; font-size:15px; padding:20px 16px}
     .slide h2{font-size:26px} .slide.title h1{font-size:38px} .slide.closing h2{font-size:26px}
     .sub,.slide.title .sub{font-size:16px; max-width:100%}
     .cols-2,.cols-3,.agenda{grid-template-columns:1fr}
+    .rows-3{grid-template-rows:none}
+    .slide>*{flex-shrink:0} .grid{flex:none; min-height:auto}
     .agenda{grid-auto-flow:row; grid-template-rows:none}
     .agenda a{padding:12px 14px; font-size:16px}
     .card h3{font-size:17px} .badge{width:28px; height:28px; font-size:14px}
     table,pre.leak{font-size:13px} blockquote{font-size:17px}
+    th,td{padding:8px 6px} tbody th{width:auto} table{table-layout:fixed}
     .controls{width:100%} .home{display:none}
   }
 
   @media print{
     @page{size:landscape; margin:0}
+    :root{color-scheme:light; --page:#fff; --surface:#fcfcfb; --surface-raised:#fff; --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#898781; --grid:#e1e0d9; --border:rgba(11,11,11,.10); --blue:#2a78d6; --blue-dark:#184f95; --blue-wash:#e8f0fb; --aqua:#1baf7a; --aqua-wash:#e3f6ee; --critical:#d03b3b; --critical-wash:#fbe9e9}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
     body{display:block; overflow:visible; padding:0; background:#fff}
     .controls{display:none}
     .stage{width:100vw; height:auto; aspect-ratio:auto; border:0; box-shadow:none; border-radius:0; container-type:normal; --u:1vw; overflow:visible}
     .slide{position:relative; display:flex; height:56.25vw; break-after:page; overflow:hidden}
+    .slide:last-child{break-after:auto}
   }
 </style>
 </head>
@@ -161,13 +170,13 @@
 
 <main class="stage" id="stage" aria-label="Using AI at Work presentation">
 
-  <section class="slide title" id="s1" aria-label="Slide 1">
+  <section class="slide title" id="s1" tabindex="-1" aria-label="Slide 1 of 12">
     <p class="eyebrow">Transaction team</p>
     <h1>Using AI at Work</h1>
     <p class="sub">A few things to keep in mind about the AI chat tools we use day to day.</p>
   </section>
 
-  <section class="slide" id="s2" aria-label="Slide 2">
+  <section class="slide" id="s2" tabindex="-1" aria-label="Slide 2 of 12">
     <h2>What we'll cover</h2>
     <ol class="agenda">
       <li><a href="#3"><span class="n">01</span>A few terms first</a></li>
@@ -182,9 +191,9 @@
     <span class="pageno">2</span>
   </section>
 
-  <section class="slide" id="s3" aria-label="Slide 3">
+  <section class="slide" id="s3" tabindex="-1" aria-label="Slide 3 of 12">
     <h2>A few terms first, so we're all on the same page</h2>
-    <div class="grid cols-2" style="grid-template-rows:1fr 1fr 1fr">
+    <div class="grid cols-2 rows-3">
       <div class="card"><h3><span class="badge">1</span>AI model (or "LLM")</h3><p>The engine behind the AI chat tools out there. It's been trained on a huge pile of text to guess a good next answer. It doesn't know things the way a person does.</p></div>
       <div class="card"><h3><span class="badge">2</span>Prompt</h3><p>Just what you type in: the question or instruction you give it. A better prompt gets you a better answer, which we'll come back to.</p></div>
       <div class="card"><h3><span class="badge">3</span>Training data</h3><p>Everything a model has learned from. On some accounts, what you type today can end up shaping tomorrow's version of the model, more on that shortly.</p></div>
@@ -194,7 +203,7 @@
     <span class="pageno">3</span>
   </section>
 
-  <section class="slide" id="s4" aria-label="Slide 4">
+  <section class="slide" id="s4" tabindex="-1" aria-label="Slide 4 of 12">
     <h2>Two examples of AI at work</h2>
     <p class="sub">Not the only kinds out there, but a useful line to know.</p>
     <div class="grid cols-2">
@@ -209,7 +218,7 @@
     <span class="pageno">4</span>
   </section>
 
-  <section class="slide" id="s5" aria-label="Slide 5">
+  <section class="slide" id="s5" tabindex="-1" aria-label="Slide 5 of 12">
     <h2>AI tools and differences according to accounts</h2>
     <p class="sub">Free, paid personal, and business accounts are three different contracts, not three price points on the same thing.</p>
     <table>
@@ -226,7 +235,7 @@
     <span class="pageno">5</span>
   </section>
 
-  <section class="slide" id="s6" aria-label="Slide 6">
+  <section class="slide" id="s6" tabindex="-1" aria-label="Slide 6 of 12">
     <h2>Before you automate: is AI actually in the loop?</h2>
     <p class="sub">Not every automation needs what's on the last page. The ones with an AI step do.</p>
     <div class="grid cols-2">
@@ -238,7 +247,7 @@
     <span class="pageno">6</span>
   </section>
 
-  <section class="slide" id="s7" aria-label="Slide 7">
+  <section class="slide" id="s7" tabindex="-1" aria-label="Slide 7 of 12">
     <h2>Some examples of how to use AI</h2>
     <p class="sub">None of this needs code, and none of it needs a new system.</p>
     <div class="grid cols-3">
@@ -249,7 +258,7 @@
     <span class="pageno">7</span>
   </section>
 
-  <section class="slide" id="s8" aria-label="Slide 8">
+  <section class="slide" id="s8" tabindex="-1" aria-label="Slide 8 of 12">
     <h2>What generally counts as sensitive</h2>
     <div class="grid cols-2">
       <div class="card"><h3><span class="badge">1</span>Client &amp; personal data</h3><p>Names, employers, contact details — anyone identifiable, colleague or client.</p></div>
@@ -261,7 +270,7 @@
     <span class="pageno">8</span>
   </section>
 
-  <section class="slide" id="s9" aria-label="Slide 9">
+  <section class="slide" id="s9" tabindex="-1" aria-label="Slide 9 of 12">
     <h2>Examples of what not to share</h2>
     <div class="grid cols-2">
       <div><span class="tag">NEVER PASTE THIS</span>
@@ -277,7 +286,7 @@ Login:     j.doe / ••••••••</pre></div>
     <span class="pageno">9</span>
   </section>
 
-  <section class="slide" id="s10" aria-label="Slide 10">
+  <section class="slide" id="s10" tabindex="-1" aria-label="Slide 10 of 12">
     <h2>Why AI makes things up (and how to reduce it)</h2>
     <p class="sub">This matters most with an outside tool: there's no one behind it checking your specific answer.</p>
     <div class="grid cols-2">
@@ -295,7 +304,7 @@ Login:     j.doe / ••••••••</pre></div>
     <span class="pageno">10</span>
   </section>
 
-  <section class="slide" id="s11" aria-label="Slide 11">
+  <section class="slide" id="s11" tabindex="-1" aria-label="Slide 11 of 12">
     <h2>Who owns what it writes?</h2>
     <p class="sub">Ownership of AI-written material is still an open legal question, treat it that way.</p>
     <div class="grid cols-2">
@@ -313,7 +322,7 @@ Login:     j.doe / ••••••••</pre></div>
     <span class="pageno">11</span>
   </section>
 
-  <section class="slide closing" id="s12" aria-label="Slide 12">
+  <section class="slide closing" id="s12" tabindex="-1" aria-label="Slide 12 of 12">
     <h2>If you were wondering, yes, this presentation was made with AI help.</h2>
   </section>
 </main>
@@ -338,13 +347,14 @@ Login:     j.doe / ••••••••</pre></div>
 
   function clamp(n) { return Math.max(0, Math.min(total - 1, n)); }
 
-  function show(index, updateHash) {
+  function show(index, updateHash, moveFocus) {
     current = clamp(index);
     slides.forEach(function (s, i) { s.classList.toggle('active', i === current); });
     counter.textContent = (current + 1) + ' / ' + total;
     progress.style.width = ((current + 1) / total * 100) + '%';
     prev.disabled = current === 0;
     next.disabled = current === total - 1;
+    if (moveFocus) slides[current].focus({ preventScroll: true });
     if (updateHash) {
       try { history.replaceState(null, '', '#' + (current + 1)); } catch (e) { /* file:// or sandboxed */ }
     }
@@ -352,7 +362,7 @@ Login:     j.doe / ••••••••</pre></div>
 
   function fromHash() {
     var n = parseInt(location.hash.replace('#', ''), 10);
-    return isNaN(n) ? 0 : n - 1;
+    return isNaN(n) ? 0 : clamp(n - 1);
   }
 
   prev.addEventListener('click', function () { show(current - 1, true); });
@@ -360,26 +370,31 @@ Login:     j.doe / ••••••••</pre></div>
 
   document.addEventListener('keydown', function (e) {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target.closest && e.target.closest('button, a, input, textarea, select, [contenteditable]')) return;
     switch (e.key) {
-      case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); show(current + 1, true); break;
-      case 'ArrowLeft': case 'PageUp': e.preventDefault(); show(current - 1, true); break;
+      case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); show(current + 1, true, true); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); show(current - 1, true, true); break;
       case 'Home': show(0, true); break;
       case 'End': show(total - 1, true); break;
     }
   });
 
-  var startX = null;
+  var startX = null, startY = null;
   var stage = document.getElementById('stage');
-  stage.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) { startX = null; return; }
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+  }, { passive: true });
   stage.addEventListener('touchend', function (e) {
     if (startX === null) return;
     var dx = e.changedTouches[0].clientX - startX;
+    var dy = e.changedTouches[0].clientY - startY;
     startX = null;
-    if (Math.abs(dx) > 60) show(current + (dx < 0 ? 1 : -1), true);
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) show(current + (dx < 0 ? 1 : -1), true);
   }, { passive: true });
 
-  window.addEventListener('hashchange', function () { show(fromHash(), false); });
-  show(fromHash(), false);
+  window.addEventListener('hashchange', function () { show(fromHash(), true, true); });
+  show(fromHash(), true);
 })();
 </script>
 </body>
