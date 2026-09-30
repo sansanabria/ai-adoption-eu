@@ -1,11 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
-    "type": "SemanticModel",
-    "displayName": "Agents Performance - Dashboard"
+    "type": "Report",
+    "displayName": "AI Adoption EU"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "385b32d3-652a-422c-b0fe-6cc8db430816"
+    "logicalId": "e875d61f-4af9-4f70-b5e8-e1a21881c6f0"
   }
 }
