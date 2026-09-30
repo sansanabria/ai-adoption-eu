@@ -37,20 +37,6 @@
                       "Entity": "AIAdoptionByOccupation"
                     }
                   },
-                  "Property": "Hours Saved per Month"
-                }
-              },
-              "queryRef": "AIAdoptionByOccupation.Hours Saved per Month",
-              "nativeQueryRef": "Hours Saved per Month"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "AIAdoptionByOccupation"
-                    }
-                  },
                   "Property": "DisplacementConcernLevel"
                 }
               },

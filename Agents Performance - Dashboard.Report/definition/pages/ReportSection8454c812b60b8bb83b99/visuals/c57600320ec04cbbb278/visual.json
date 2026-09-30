@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "AIAdoptionByEnterpriseSize.EnterpriseSize",
-              "nativeQueryRef": "EnterpriseSize"
+              "nativeQueryRef": "EnterpriseSize",
+              "active": true
             }
           ]
         },
@@ -51,7 +52,6 @@
         }
       }
     },
-    "objects": {},
     "visualContainerObjects": {
       "title": [
         {
@@ -66,7 +66,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Size matters \u2014 adoption by headcount, 2025'"
+                  "Value": "'Size matters — adoption by headcount, 2025'"
                 }
               }
             }

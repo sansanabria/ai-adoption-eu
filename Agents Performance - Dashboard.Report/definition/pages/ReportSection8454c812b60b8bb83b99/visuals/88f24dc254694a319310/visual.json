@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "AIAdoptionTrendEU.Year",
-              "nativeQueryRef": "Year"
+              "nativeQueryRef": "Year",
+              "active": true
             }
           ]
         },
@@ -80,7 +81,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Enterprise adoption is accelerating (2021\u20132025)'"
+                  "Value": "'Enterprise adoption is accelerating (2021–2025)'"
                 }
               }
             }

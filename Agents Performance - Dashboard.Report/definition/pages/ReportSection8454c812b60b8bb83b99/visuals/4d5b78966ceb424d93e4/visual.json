@@ -17,19 +17,7 @@
           "properties": {
             "paragraphs": [
               {
-                "textRunsCollection": [
-                  {
-                    "textRunsCollection": [
-                      {
-                        "value": "Eurostat & European Commission \u00b7 enterprise adoption, business functions, and the workers benefiting most, 2021\u20132026",
-                        "textStyle": {
-                          "fontSize": "12px",
-                          "color": "#52514E"
-                        }
-                      }
-                    ]
-                  }
-                ]
+                "textRuns": []
               }
             ]
           }

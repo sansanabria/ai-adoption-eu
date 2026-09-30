@@ -93,14 +93,10 @@ table '# Measures'
 		displayFolder: Country
 		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a07
 
-	column Value1
-		isHidden
-		formatString: 0
-		lineageTag: e1a1b7a1-1b1a-4a1a-9a1a-1a1a1a1a1a00
-		summarizeBy: sum
-		sourceColumn: Value1
-
-		annotation SummarizationSetBy = Automatic
+	column Value
+		lineageTag: 3251ed39-b020-4553-8cc5-8a319d296d96
+		isNameInferred
+		sourceColumn: [Value]
 
 	partition '# Measures' = calculated
 		source = {1}

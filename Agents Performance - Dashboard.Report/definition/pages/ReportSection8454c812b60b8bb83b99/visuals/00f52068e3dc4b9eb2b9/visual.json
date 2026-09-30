@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "AIAdoptionBySector.Sector",
-              "nativeQueryRef": "Sector"
+              "nativeQueryRef": "Sector",
+              "active": true
             }
           ]
         },
@@ -69,7 +70,6 @@
         "isDefaultSort": true
       }
     },
-    "objects": {},
     "visualContainerObjects": {
       "title": [
         {

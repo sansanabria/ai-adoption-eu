@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "AIAdoptionByBusinessFunction.BusinessFunction",
-              "nativeQueryRef": "BusinessFunction"
+              "nativeQueryRef": "BusinessFunction",
+              "active": true
             }
           ]
         },
@@ -69,7 +70,6 @@
         "isDefaultSort": true
       }
     },
-    "objects": {},
     "visualContainerObjects": {
       "title": [
         {
