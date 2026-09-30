@@ -1,8 +1,10 @@
-# AI Adoption in the Workplace — EU Power BI Case Study
+# Who's actually using AI at work in Europe? — an EU Power BI case study
 
-An end-to-end BI project: sourcing official EU statistics on AI adoption at work, modeling them in a Power BI semantic model, building a report, and prototyping the same story as a standalone HTML dashboard — paired with an internal "using AI safely at work" guidance deck.
+An end-to-end BI project: sourcing official EU statistics on AI adoption at work, modeling them in a Power BI semantic model, building a report, and prototyping the same story as a standalone HTML dashboard — paired with a "using AI safely at work" guidance deck.
 
 **Live:** [dashboard](https://sansanabria.github.io/ai-adoption-eu/) · [AI-at-work slide deck](https://sansanabria.github.io/ai-adoption-eu/presentation.html) (GitHub Pages, served from `/docs`).
+
+[![Dashboard preview: headline and key figures](docs/screenshot.png)](https://sansanabria.github.io/ai-adoption-eu/)
 
 ## What's in here
 
@@ -12,7 +14,7 @@ An end-to-end BI project: sourcing official EU statistics on AI adoption at work
 | `Data/` | The source CSVs the semantic model imports, plus the two raw Eurostat exports they were derived from |
 | `docs/index.html` | Standalone HTML version of the dashboard (same data, hand-built charts, no Power BI required to view) |
 | `docs/presentation.html` | The same guidance deck as a keyboard-navigable web presentation (←/→, `#N` deep links, print to PDF) |
-| `AI At Work.pptx` | Internal guidance deck on using AI chat tools safely (terms, account-tier risks, what not to paste into a prompt, hallucinations, ownership of AI-written work) |
+| `AI At Work.pptx` | Guidance deck on using AI chat tools safely (terms, account-tier risks, what not to paste into a prompt, hallucinations, ownership of AI-written work) |
 
 ## Data sources
 
@@ -40,3 +42,7 @@ Eurostat figures were pulled directly from Eurostat's public API (dataset codes 
 ## Tools used
 
 Built with [Claude Code](https://claude.com/claude-code), using the [`skills-for-fabric`](https://github.com/microsoft/skills-for-fabric) plugin (`powerbi-authoring`) for the semantic model and report authoring, and Anthropic's `dataviz` / `artifact-design` skills for the HTML dashboard's chart and visual design.
+
+## License
+
+Code, HTML and slide deck: [MIT](LICENSE). The underlying data belongs to its publishers (Eurostat, European Commission) and remains subject to their reuse terms — see [Data sources](#data-sources).
