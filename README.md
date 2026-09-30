@@ -11,6 +11,7 @@ An end-to-end BI project: sourcing official EU statistics on AI adoption at work
 | `Agents Performance - Dashboard.pbip` + `.SemanticModel` / `.Report` | The Power BI project (PBIP format — open with Power BI Desktop) |
 | `Data/` | The source CSVs the semantic model imports, plus the two raw Eurostat exports they were derived from |
 | `docs/index.html` | Standalone HTML version of the dashboard (same data, hand-built charts, no Power BI required to view) |
+| `docs/presentation.html` | The same guidance deck as a keyboard-navigable web presentation (←/→, `#N` deep links, print to PDF) |
 | `AI At Work.pptx` | Internal guidance deck on using AI chat tools safely (terms, account-tier risks, what not to paste into a prompt, hallucinations, ownership of AI-written work) |
 
 ## Data sources
