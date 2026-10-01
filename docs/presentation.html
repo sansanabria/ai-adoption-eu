@@ -4,7 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Using AI at Work</title>
-<meta name="description" content="Guidance deck on using AI chat tools safely at work: terms, account tiers, what not to share, hallucinations and ownership.">
+<meta name="description" content="A 12-slide guide to using AI chat tools at work: free vs paid vs business accounts, what counts as sensitive, why AI makes things up, and who owns what it writes.">
+<link rel="canonical" href="https://sansanabria.github.io/ai-adoption-eu/presentation.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#020816">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AI Adoption EU">
+<meta property="og:title" content="Using AI at Work: what to know before you paste anything">
+<meta property="og:description" content="A 12-slide guide: free vs paid vs business accounts, what counts as sensitive, why AI makes things up, and who owns what it writes.">
+<meta property="og:url" content="https://sansanabria.github.io/ai-adoption-eu/presentation.html">
+<meta property="og:image" content="https://sansanabria.github.io/ai-adoption-eu/assets/og-deck.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:image:alt" content="Title slide of Using AI at Work: a glowing AI emblem above a robotic hand">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600;700&display=swap">
 <style>
   :root{
@@ -88,14 +102,17 @@
   .callout.bad{background:var(--critical-wash); border-left-color:var(--critical)}
   .note{color:var(--muted); font-size:calc(var(--u)*1.25)}
 
-  /* Title slide */
-  .slide.title{justify-content:center; gap:calc(var(--u)*2);
-    background:linear-gradient(135deg,var(--blue-wash),var(--surface) 60%)}
-  .slide.title h1{font-size:calc(var(--u)*7)}
-  .slide.title .sub{font-size:calc(var(--u)*2.1); max-width:60%}
+  /* Title slide: the PowerPoint's artwork, dark in both themes */
+  .slide.title{justify-content:center; gap:calc(var(--u)*2); color:#fff;
+    background:linear-gradient(90deg,rgba(2,8,22,.96) 0%,rgba(2,8,22,.8) 38%,rgba(2,8,22,0) 68%),
+      url("assets/deck-title.jpg") right center/cover no-repeat, #020816}
+  .slide.title h1{font-size:calc(var(--u)*5.6)}
+  .slide.title .sub{font-size:calc(var(--u)*2.1); max-width:48%; color:#c9d8ef}
   .slide.closing{justify-content:center; align-items:center; text-align:center;
     background:linear-gradient(135deg,var(--aqua-wash),var(--surface) 60%)}
   .slide.closing h2{font-size:calc(var(--u)*4); max-width:75%}
+  .deck-cta{font-size:calc(var(--u)*1.7); color:var(--text-secondary)}
+  .deck-cta a{color:var(--blue); font-weight:600; text-underline-offset:.2em}
 
   /* Agenda */
   .agenda{list-style:none; padding:0; display:grid; grid-template-columns:1fr 1fr; grid-auto-flow:column;
@@ -134,7 +151,11 @@
   .bar{flex:1; height:6px; background:var(--grid); border-radius:99px; overflow:hidden}
   .bar i{display:block; height:100%; width:0; background:var(--blue); transition:width .25s}
   #counter{font-variant-numeric:tabular-nums; color:var(--text-secondary); min-width:5.5em; text-align:center}
-  .home{margin-left:auto; color:var(--muted); font-size:13px; text-decoration:none}
+  .dl{font-weight:600; font-size:14px; color:var(--text-primary); text-decoration:none; white-space:nowrap;
+    background:var(--surface-raised); border:1px solid var(--border); border-radius:99px; padding:8px 16px}
+  .dl:hover{border-color:var(--blue)}
+  .dl:focus-visible,.home:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+  .home{color:var(--muted); font-size:13px; text-decoration:none}
 
   /* Phones: drop 16:9, let each slide scroll */
   @media (max-width:760px){
@@ -152,6 +173,10 @@
     table,pre.leak{font-size:13px} blockquote{font-size:17px}
     th,td{padding:8px 6px} tbody th{width:auto} table{table-layout:fixed}
     .controls{width:100%} .home{display:none}
+    .dl{padding:8px 12px} .dl-long{display:none}
+    .slide.title{justify-content:flex-end;
+      background:linear-gradient(180deg,rgba(2,8,22,0) 0%,rgba(2,8,22,0) 42%,rgba(2,8,22,.94) 74%),
+        url("assets/deck-title.jpg") 70% center/cover no-repeat, #020816}
   }
 
   @media print{
@@ -172,7 +197,7 @@
 
   <section class="slide title" id="s1" tabindex="-1" aria-label="Slide 1 of 12">
     <h1>Using AI at Work</h1>
-    <p class="sub">A few things to keep in mind about the AI chat tools we use day to day.</p>
+    <p class="sub">What to know before you paste work into an AI chat tool.</p>
   </section>
 
   <section class="slide" id="s2" tabindex="-1" aria-label="Slide 2 of 12">
@@ -180,7 +205,7 @@
     <ol class="agenda">
       <li><a href="#3"><span class="n">01</span>A few terms first</a></li>
       <li><a href="#4"><span class="n">02</span>Two examples of AI at work</a></li>
-      <li><a href="#5"><span class="n">03</span>AI tools and differences according to accounts</a></li>
+      <li><a href="#5"><span class="n">03</span>Your account type decides what happens to your data</a></li>
       <li><a href="#6"><span class="n">04</span>Before you automate: is AI in the loop?</a></li>
       <li><a href="#7"><span class="n">05</span>Some examples of how to use AI</a></li>
       <li><a href="#8"><span class="n">06</span>Examples of what not to share</a></li>
@@ -206,9 +231,9 @@
     <h2>Two examples of AI at work</h2>
     <p class="sub">Not the only kinds out there, but a useful line to know.</p>
     <div class="grid cols-2">
-      <div class="card"><h3><span class="badge">1</span>Our own AI agent</h3>
-        <p>Something the company sets up and controls itself. It might run on the same kind of model as any public AI chat tool under the hood, but it lives inside our own systems, with our own rules about what it can see and where the data goes.</p>
-        <p class="eg">Examples: an internal assistant IT built for us, a tool wired directly into our own systems and data.</p></div>
+      <div class="card"><h3><span class="badge">1</span>Your company's own AI tool</h3>
+        <p>Something the company sets up and controls itself. It might run on the same kind of model as any public AI chat tool under the hood, but it lives inside the company's own systems, with its own rules about what it can see and where the data goes.</p>
+        <p class="eg">Examples: an assistant your IT team set up, or AI built into tools your company already manages.</p></div>
       <div class="card"><h3><span class="badge teal">2</span>An outside AI tool</h3>
         <p>Any AI chat tool you've signed up for yourself through a browser or an app. Genuinely useful. But the moment you're in it, you're a guest inside someone else's product, on their terms.</p>
         <p class="eg">Examples: a public AI chatbot on your own login, an AI app on your phone, any free browser extension that "adds AI" to something.</p></div>
@@ -218,13 +243,13 @@
   </section>
 
   <section class="slide" id="s5" tabindex="-1" aria-label="Slide 5 of 12">
-    <h2>AI tools and differences according to accounts</h2>
+    <h2>Your account type decides what happens to your data</h2>
     <p class="sub">Free, paid personal, and business accounts are three different contracts, not three price points on the same thing.</p>
     <table>
       <thead><tr><th scope="col"></th><th scope="col">Personal (Free)</th><th scope="col">Personal (Paid)</th><th scope="col">Business / Enterprise</th></tr></thead>
       <tbody>
         <tr><th scope="row">Trains the model on what you type?</th><td>On by default, opt out yourself</td><td>On by default, opt out yourself</td><td>No, by default</td></tr>
-        <tr><th scope="row">Who can actually see it</th><td>The provider</td><td>The provider</td><td>Us, provider access is contractually limited</td></tr>
+        <tr><th scope="row">Who can actually see it</th><td>The provider</td><td>The provider</td><td>Your company; provider access is limited by contract</td></tr>
         <tr><th scope="row">Data deletion on request</th><td>Rarely</td><td>Sometimes</td><td>Yes, configurable</td></tr>
         <tr><th scope="row">Can the company manage the account?</th><td>No</td><td>No</td><td>Admin controls, company sign-in</td></tr>
       </tbody>
@@ -291,8 +316,8 @@ Login:     j.doe / ••••••••</pre></div>
     <div class="grid cols-2">
       <div class="card"><p class="eyebrow">Why it happens</p>
         <ol class="num">
-          <li><span class="badge">1</span><span>No access to our systems, it only knows what you tell it.</span></li>
-          <li><span class="badge">2</span><span>It has a cutoff date, a new rule or updated circular might not be in there yet.</span></li>
+          <li><span class="badge">1</span><span>It can't see your company's systems, only what you tell it.</span></li>
+          <li><span class="badge">2</span><span>It has a cutoff date, a new regulation or policy update might not be in there yet.</span></li>
           <li><span class="badge">3</span><span>It's built to sound fluent, not to flag doubt: the tone is the same whether it's sure or just making something up.</span></li>
           <li><span class="badge">4</span><span>Disagreeing with it often makes it agree with you, which isn't the same as you being right.</span></li>
         </ol></div>
@@ -315,7 +340,7 @@ Login:     j.doe / ••••••••</pre></div>
           <li><span class="badge teal">1</span><span><strong>Edit it, don't just copy it.</strong>Real changes and choices are what make something actually yours.</span></li>
           <li><span class="badge teal">2</span><span><strong>Keep a record.</strong>Note what was AI-drafted and what a person changed, especially for anything client-facing.</span></li>
           <li><span class="badge teal">3</span><span><strong>Don't publish it as-is.</strong>Not under the company's name, for anything that matters legally or commercially.</span></li>
-          <li><span class="badge teal">4</span><span><strong>Ask when it's not obvious.</strong>Check with Legal or Compliance before your name, or the company's, goes on AI-written material.</span></li>
+          <li><span class="badge teal">4</span><span><strong>Ask when it's not obvious.</strong>Check your company's AI policy, or ask your legal team, before your name goes on AI-written material.</span></li>
         </ol></div>
     </div>
     <span class="pageno">11</span>
@@ -323,6 +348,7 @@ Login:     j.doe / ••••••••</pre></div>
 
   <section class="slide closing" id="s12" tabindex="-1" aria-label="Slide 12 of 12">
     <h2>If you were wondering, yes, this presentation was made with AI help.</h2>
+    <p class="deck-cta">Explore the data behind this guide: <a href="./">sansanabria.github.io/ai-adoption-eu</a></p>
   </section>
 </main>
 
@@ -331,7 +357,8 @@ Login:     j.doe / ••••••••</pre></div>
   <div class="bar" aria-hidden="true"><i id="progress"></i></div>
   <span id="counter" aria-live="polite">1 / 12</span>
   <button id="next" type="button" aria-label="Next slide">Next →</button>
-  <a class="home" href="index.html">← Dashboard</a>
+  <a class="dl" href="downloads/using-ai-at-work-slides.pdf" download><span class="dl-long">Download </span>PDF</a>
+  <a class="home" href="./">← Dashboard</a>
 </nav>
 
 <script>
