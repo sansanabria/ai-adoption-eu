@@ -3,3 +3,6 @@
 ~$*.pptx
 ~$*.docx
 ~$*.xlsx
+# Python bytecode
+__pycache__/
+*.pyc

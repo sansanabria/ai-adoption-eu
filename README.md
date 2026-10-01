@@ -2,7 +2,7 @@
 
 An end-to-end BI project: sourcing official EU statistics on AI adoption at work, modeling them in a Power BI semantic model, building a report, and prototyping the same story as a standalone HTML dashboard — paired with a "using AI safely at work" guidance deck.
 
-**Live:** [dashboard](https://sansanabria.github.io/ai-adoption-eu/) · [AI-at-work slide deck](https://sansanabria.github.io/ai-adoption-eu/presentation.html) (GitHub Pages, served from `/docs`).
+**Live:** [dashboard](https://sansanabria.github.io/ai-adoption-eu/) · [AI-at-work slide deck](https://sansanabria.github.io/ai-adoption-eu/presentation.html) (GitHub Pages, served from `/docs`) · downloads: [slides PDF](docs/downloads/using-ai-at-work-slides.pdf), [LinkedIn carousel PDF](docs/downloads/using-ai-at-work-linkedin.pdf).
 
 [![Dashboard preview: headline and key figures](docs/screenshot.png)](https://sansanabria.github.io/ai-adoption-eu/)
 
@@ -12,8 +12,11 @@ An end-to-end BI project: sourcing official EU statistics on AI adoption at work
 |---|---|
 | `AI Adoption EU.pbip` + `.SemanticModel` / `.Report` | The Power BI project (PBIP format — open with Power BI Desktop) |
 | `Data/` | The source CSVs the semantic model imports, plus the two raw Eurostat exports they were derived from |
-| `docs/index.html` | Standalone HTML version of the dashboard (same data, hand-built charts, no Power BI required to view) |
-| `docs/presentation.html` | The same guidance deck as a keyboard-navigable web presentation (←/→, `#N` deep links, print to PDF) |
+| `docs/index.html` (+ `styles.css`, `dashboard.js`) | Standalone HTML version of the dashboard: same data, a tile map of the EU, tooltips, phone-friendly; no Power BI required to view |
+| `docs/presentation.html` | The guidance deck as a keyboard-navigable web presentation (←/→, `#N` deep links, PDF download) |
+| `docs/downloads/` | The deck as a 16:9 PDF, and as a 10-page portrait carousel (1080×1350) for LinkedIn document posts |
+| `design/linkedin-carousel.html` | Source of the LinkedIn carousel; print it with headless Chrome or Edge to rebuild the PDF |
+| `tools/` | `build_charts.py` regenerates the dashboard's charts from `Data/`; `check_dashboard.py` confirms every number on the page matches the CSVs |
 | `AI At Work.pptx` | Guidance deck on using AI chat tools safely (terms, account-tier risks, what not to paste into a prompt, hallucinations, ownership of AI-written work) |
 
 ## Data sources
@@ -37,7 +40,14 @@ Eurostat figures were pulled directly from Eurostat's public API (dataset codes 
 
 ## HTML prototype
 
-`docs/index.html` is a self-contained, dependency-free HTML/CSS page (one Google Fonts link, no JS framework, no chart library — bars and the trend line are hand-drawn SVG/CSS) built to the same design system as the Power BI report: EU blue as the primary color, a single gold accent, Newsreader/Inter type pairing, light/dark mode support.
+`docs/index.html` is a dependency-free HTML/CSS page (one Google Fonts link, no framework, no chart library) built to the same design system as the Power BI report: EU blue, Newsreader/Inter, light and dark mode. The bar charts, the trend line and the EU tile map are plain HTML/CSS/SVG generated from the CSVs; a small script (`docs/dashboard.js`) adds tooltips and links each country's tile to its row in the ranked list. Colours follow the dataviz method: one blue for bars, a single-hue light-to-dark ramp for the map (label colours chosen per tile for at least 4.5:1 contrast), and a validated light-to-dark ramp for company size.
+
+After changing anything in `Data/`, rebuild and verify the page:
+
+```
+python tools/build_charts.py
+python tools/check_dashboard.py
+```
 
 ## Tools used
 
