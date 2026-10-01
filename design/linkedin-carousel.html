@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Using AI at work: LinkedIn carousel</title>
+<!--
+  Source of docs/downloads/using-ai-at-work-linkedin.pdf (10 portrait pages, 1080 x 1350).
+  The country map on the last page is filled in by tools/build_charts.py.
+  To rebuild the PDF, print this file with headless Chrome or Edge, for example:
+    msedge --headless=new --no-pdf-header-footer --print-to-pdf=docs/downloads/using-ai-at-work-linkedin.pdf design/linkedin-carousel.html
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  @page{size:1080px 1350px;margin:0}
+  :root{
+    --bg:#07101f;
+    --bg-deep:#020816;
+    --panel:#0f1b31;
+    --ink:#ffffff;
+    --ink-2:#c9d8ef;
+    --muted:#93a6c4;
+    --line:rgba(255,255,255,.12);
+    --blue:#3987e5;
+    --blue-light:#86b6ef;
+    --red:#e66767;
+    --red-wash:rgba(230,103,103,.12);
+    --green:#4cc94c;
+    --green-wash:rgba(12,163,12,.14);
+  }
+  *{box-sizing:border-box;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#333}
+  body{font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+  .page{
+    position:relative;width:1080px;height:1350px;overflow:hidden;
+    background:var(--bg);padding:104px 92px 150px;
+    display:flex;flex-direction:column;justify-content:safe center;gap:44px;
+    break-after:page;
+  }
+  .page:last-child{break-after:auto}
+  @media screen{ body{display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 0} }
+
+  .foot{position:absolute;left:92px;right:92px;bottom:64px;display:flex;justify-content:space-between;font-size:24px;color:var(--muted)}
+  .kicker{font-size:26px;font-weight:600;letter-spacing:.02em;color:var(--blue-light)}
+  h1,h2{font-family:Newsreader,Georgia,serif;font-weight:600;letter-spacing:-.01em;line-height:1.08}
+  h2{font-size:78px}
+  .lead{font-size:37px;line-height:1.45;color:var(--ink-2)}
+  .small{font-size:25px;line-height:1.5;color:var(--muted)}
+
+  /* 1 cover */
+  .cover{
+    justify-content:flex-end;background-color:var(--bg-deep);
+    background-image:linear-gradient(180deg,rgba(2,8,22,0) 22%,rgba(2,8,22,.9) 50%,#020816 62%),url("../docs/assets/deck-title.jpg");
+    background-repeat:no-repeat;background-size:100% 100%,auto 820px;background-position:0 0,75% 0;
+  }
+  .cover h1{font-size:92px}
+  .cover .lead{font-size:36px}
+
+  /* 2 the data */
+  .stat{display:grid;grid-template-columns:380px 1fr;gap:28px;align-items:baseline;padding:26px 0;border-top:1px solid var(--line)}
+  .stat-num{font-size:176px;font-weight:700;letter-spacing:-.03em;line-height:.95;color:var(--blue-light)}
+  .stat-text{font-size:38px;line-height:1.35;font-weight:500}
+
+  /* 3 accounts */
+  table{width:100%;border-collapse:collapse;font-size:30px}
+  th,td{padding:22px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);line-height:1.3}
+  thead th{font-size:26px;color:var(--muted);font-weight:600}
+  tbody th{font-weight:600;width:34%}
+  td{color:var(--ink-2)}
+  .biz{background:rgba(57,135,229,.16);color:var(--ink);font-weight:600}
+  .callout{background:var(--panel);border-left:8px solid var(--blue);border-radius:12px;padding:30px 34px;font-size:34px;line-height:1.4;font-weight:600}
+
+  /* lists with a bold lead-in */
+  .points{list-style:none;padding:0;display:flex;flex-direction:column;gap:40px}
+  .points li{font-size:35px;line-height:1.45;color:var(--ink-2);padding-left:34px;border-left:4px solid var(--blue)}
+  .points b{display:block;color:var(--ink);font-size:40px;margin-bottom:4px}
+
+  /* 5 example */
+  .box{border-radius:16px;padding:32px 36px}
+  .box-label{font-size:24px;font-weight:700;letter-spacing:.04em;margin-bottom:14px}
+  .never{background:var(--red-wash);border:2px dashed var(--red)}
+  .never .box-label{color:var(--red)}
+  .never pre{font-family:Consolas,"Courier New",monospace;font-size:32px;line-height:1.6;white-space:pre-wrap;color:var(--ink)}
+  .instead{background:var(--green-wash);border:2px solid rgba(76,201,76,.55)}
+  .instead .box-label{color:var(--green)}
+  .instead p{font-size:35px;line-height:1.45}
+
+  /* 7 prompt */
+  blockquote{font-family:Newsreader,Georgia,serif;font-style:italic;font-weight:500;font-size:66px;line-height:1.22;border-left:10px solid var(--blue);padding-left:44px}
+
+  /* 9 automate */
+  .pair{display:grid;gap:28px}
+  .card{background:var(--panel);border-radius:16px;padding:34px 38px;border:1px solid var(--line)}
+  .card h3{font-size:42px;margin-bottom:12px}
+  .card p{font-size:34px;line-height:1.45;color:var(--ink-2)}
+  .card.ai{border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)}
+
+  /* 10 explore the data: the dashboard's tile map, dark colours */
+  .tilemap{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;width:700px}
+  .tile{aspect-ratio:1;border-radius:6px;background:var(--fd);color:var(--td);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+  .tile-code{font-size:19px;font-weight:700}
+  .tile-val{font-size:27px;font-weight:600}
+  .url{font-size:34px;font-weight:700;color:var(--blue-light)}
+</style>
+</head>
+<body>
+
+<section class="page cover">
+  <p class="kicker">A 10-slide guide</p>
+  <h1>Using AI at work? Read this before you paste anything.</h1>
+  <p class="lead">Free vs paid accounts, what counts as sensitive, why AI makes things up, and who owns what it writes.</p>
+  <div class="foot"><span>By Sandra</span><span>Swipe to read</span></div>
+</section>
+
+<section class="page">
+  <p class="kicker">Why it matters</p>
+  <div>
+    <div class="stat"><span class="stat-num">27%</span><span class="stat-text">of Europeans already use AI for work.</span></div>
+    <div class="stat"><span class="stat-num">91%</span><span class="stat-text">of them say it helps them finish tasks faster.</span></div>
+  </div>
+  <p class="lead">The question isn't whether people will use it at work. It's how to use it without leaking what they shouldn't.</p>
+  <p class="small">Source: European Commission, Spring 2026 Economic Forecast. Survey of 21,207 people in 18 EU countries and 4 candidate countries, February to March 2026.</p>
+  <div class="foot"><span>Using AI at work</span><span>2 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>Free, paid and business accounts are not the same deal</h2>
+  <table>
+    <thead><tr><th></th><th>Free</th><th>Paid personal</th><th class="biz">Business</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Trains the model on what you type?</th><td>On by default</td><td>On by default</td><td class="biz">Off by default</td></tr>
+      <tr><th scope="row">Who can see it</th><td>The provider</td><td>The provider</td><td class="biz">Your company</td></tr>
+      <tr><th scope="row">Deleted on request</th><td>Rarely</td><td>Sometimes</td><td class="biz">Yes, configurable</td></tr>
+    </tbody>
+  </table>
+  <p class="callout">A paid plan buys you a better tool. It doesn't buy you privacy.</p>
+  <p class="small">With business accounts, provider access is limited by contract. Policies differ by provider and change often, so check the tool's own data controls.</p>
+  <div class="foot"><span>Using AI at work</span><span>3 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>What counts as sensitive</h2>
+  <ul class="points">
+    <li><b>Client &amp; personal data</b>Names, employers, contact details: anyone identifiable.</li>
+    <li><b>Account &amp; case numbers</b>Anything that maps back to a specific record.</li>
+    <li><b>Exact financial figures</b>Real balances, amounts and dates. Round them or describe them instead.</li>
+    <li><b>Credentials &amp; internal info</b>Logins, API keys, and anything not yet public.</li>
+  </ul>
+  <p class="callout">If you wouldn't post it on the company intranet, don't paste it into an AI chat tool.</p>
+  <div class="foot"><span>Using AI at work</span><span>4 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>Take out the who. Keep the what.</h2>
+  <div class="box never">
+    <p class="box-label">NEVER PASTE THIS</p>
+<pre>Client:  Jane Doe, Acme Holdings Ltd
+Account: 88-4471-02
+Amount:  EUR 41,220, due 14 Mar
+Login:   j.doe / ••••••••</pre>
+  </div>
+  <div class="box instead">
+    <p class="box-label">SHARE THIS INSTEAD</p>
+    <p>"A client's payment of roughly EUR 40k is 2 weeks overdue. What's a firm but professional follow-up email?"</p>
+  </div>
+  <p class="lead">Once it's sent, it can't be pulled back. The problem stays in; the names and numbers come out.</p>
+  <div class="foot"><span>Using AI at work</span><span>5 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>Why AI makes things up</h2>
+  <ul class="points">
+    <li><b>No inside view</b>It can't see your company's systems, only what you tell it.</li>
+    <li><b>A cutoff date</b>A new regulation or policy update might not be in there yet.</li>
+    <li><b>Fluent, not careful</b>It sounds just as sure when it's guessing as when it's right.</li>
+    <li><b>Too agreeable</b>Push back and it often agrees with you, which doesn't make you right.</li>
+  </ul>
+  <div class="foot"><span>Using AI at work</span><span>6 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>One prompt that helps</h2>
+  <blockquote>"Always tell me where this comes from. If you don't have a real source, or you're not sure, say so instead of guessing."</blockquote>
+  <p class="lead">Then check anything factual before you rely on it.</p>
+  <div class="foot"><span>Using AI at work</span><span>7 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>Who owns what AI writes?</h2>
+  <p class="lead">Courts have been ruling that purely AI-written work isn't protected by copyright, only the parts where a person made the creative choices.</p>
+  <ul class="points">
+    <li><b>Edit it, don't just copy it</b>Real changes and choices make it yours.</li>
+    <li><b>Keep a record</b>Note what was AI-drafted and what you changed.</li>
+    <li><b>Don't publish it as-is</b>Not under your company's name, if it matters.</li>
+    <li><b>When unsure, ask</b>Check your company's AI policy or legal team.</li>
+  </ul>
+  <div class="foot"><span>Using AI at work</span><span>8 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>Before you automate: is AI in the loop?</h2>
+  <div class="pair">
+    <div class="card"><h3>No AI step</h3><p>A scheduled export or a rules engine moving data around. Your normal build, test and sign-off process applies.</p></div>
+    <div class="card ai"><h3>AI is one of the steps</h3><p>If any step reads, summarises, decides or drafts with an AI model, the account rules apply. Test it on made-up data first.</p></div>
+  </div>
+  <div class="foot"><span>Using AI at work</span><span>9 / 10</span></div>
+</section>
+
+<section class="page">
+  <h2>Explore the data</h2>
+  <p class="lead">Which countries, company sizes and sectors use AI the most? An interactive dashboard built on Eurostat and European Commission data.</p>
+  <div class="tilemap" aria-label="Share of companies using AI by EU country">
+<!-- gen:map-tiles -->
+<div class="tile" style="grid-area:1/5;--fl:#184f95;--tl:#ffffff;--fd:#9ec5f4;--td:#0b0b0b" data-chart="map" data-key="Sweden" data-value="35.04" data-code="SE" data-tip-label="Sweden" data-tip-value="35.0%" data-tip-note="3rd of 27"><span class="tile-code">SE</span><span class="tile-val">35</span></div>
+<div class="tile" style="grid-area:1/6;--fl:#184f95;--tl:#ffffff;--fd:#9ec5f4;--td:#0b0b0b" data-chart="map" data-key="Finland" data-value="37.82" data-code="FI" data-tip-label="Finland" data-tip-value="37.8%" data-tip-note="2nd of 27"><span class="tile-code">FI</span><span class="tile-val">38</span></div>
+<div class="tile" style="grid-area:2/1;--fl:#5598e7;--tl:#0b0b0b;--fd:#3987e5;--td:#0b0b0b" data-chart="map" data-key="Ireland" data-value="19.64" data-code="IE" data-tip-label="Ireland" data-tip-value="19.6%" data-tip-note="14th of 27"><span class="tile-code">IE</span><span class="tile-val">20</span></div>
+<div class="tile" style="grid-area:2/4;--fl:#104281;--tl:#ffffff;--fd:#b7d3f6;--td:#0b0b0b" data-chart="map" data-key="Denmark" data-value="42.03" data-code="DK" data-tip-label="Denmark" data-tip-value="42.0%" data-tip-note="1st of 27"><span class="tile-code">DK</span><span class="tile-val">42</span></div>
+<div class="tile" style="grid-area:2/7;--fl:#3987e5;--tl:#0b0b0b;--fd:#5598e7;--td:#0b0b0b" data-chart="map" data-key="Estonia" data-value="23.4" data-code="EE" data-tip-label="Estonia" data-tip-value="23.4%" data-tip-note="9th of 27"><span class="tile-code">EE</span><span class="tile-val">23</span></div>
+<div class="tile" style="grid-area:3/3;--fl:#1c5cab;--tl:#ffffff;--fd:#86b6ef;--td:#0b0b0b" data-chart="map" data-key="Netherlands" data-value="33.21" data-code="NL" data-tip-label="Netherlands" data-tip-value="33.2%" data-tip-note="6th of 27"><span class="tile-code">NL</span><span class="tile-val">33</span></div>
+<div class="tile" style="grid-area:3/4;--fl:#3987e5;--tl:#0b0b0b;--fd:#5598e7;--td:#0b0b0b" data-chart="map" data-key="Germany" data-value="25.97" data-code="DE" data-tip-label="Germany" data-tip-value="26.0%" data-tip-note="8th of 27"><span class="tile-code">DE</span><span class="tile-val">26</span></div>
+<div class="tile" style="grid-area:3/5;--fl:#9ec5f4;--tl:#0b0b0b;--fd:#184f95;--td:#ffffff" data-chart="map" data-key="Poland" data-value="8.36" data-code="PL" data-tip-label="Poland" data-tip-value="8.4%" data-tip-note="26th of 27"><span class="tile-code">PL</span><span class="tile-val">8</span></div>
+<div class="tile" style="grid-area:3/6;--fl:#5598e7;--tl:#0b0b0b;--fd:#3987e5;--td:#0b0b0b" data-chart="map" data-key="Lithuania" data-value="21.3" data-code="LT" data-tip-label="Lithuania" data-tip-value="21.3%" data-tip-note="12th of 27"><span class="tile-code">LT</span><span class="tile-val">21</span></div>
+<div class="tile" style="grid-area:3/7;--fl:#86b6ef;--tl:#0b0b0b;--fd:#1c5cab;--td:#ffffff" data-chart="map" data-key="Latvia" data-value="12.21" data-code="LV" data-tip-label="Latvia" data-tip-value="12.2%" data-tip-note="20th of 27"><span class="tile-code">LV</span><span class="tile-val">12</span></div>
+<div class="tile" style="grid-area:4/2;--fl:#1c5cab;--tl:#ffffff;--fd:#86b6ef;--td:#0b0b0b" data-chart="map" data-key="Belgium" data-value="34.54" data-code="BE" data-tip-label="Belgium" data-tip-value="34.5%" data-tip-note="4th of 27"><span class="tile-code">BE</span><span class="tile-val">35</span></div>
+<div class="tile" style="grid-area:4/3;--fl:#1c5cab;--tl:#ffffff;--fd:#86b6ef;--td:#0b0b0b" data-chart="map" data-key="Luxembourg" data-value="33.61" data-code="LU" data-tip-label="Luxembourg" data-tip-value="33.6%" data-tip-note="5th of 27"><span class="tile-code">LU</span><span class="tile-val">34</span></div>
+<div class="tile" style="grid-area:4/4;--fl:#6da7ec;--tl:#0b0b0b;--fd:#256abf;--td:#ffffff" data-chart="map" data-key="Czechia" data-value="17.6" data-code="CZ" data-tip-label="Czechia" data-tip-value="17.6%" data-tip-note="17th of 27"><span class="tile-code">CZ</span><span class="tile-val">18</span></div>
+<div class="tile" style="grid-area:4/5;--fl:#6da7ec;--tl:#0b0b0b;--fd:#256abf;--td:#ffffff" data-chart="map" data-key="Slovakia" data-value="18.0" data-code="SK" data-tip-label="Slovakia" data-tip-value="18.0%" data-tip-note="16th of 27"><span class="tile-code">SK</span><span class="tile-val">18</span></div>
+<div class="tile" style="grid-area:5/2;--fl:#6da7ec;--tl:#0b0b0b;--fd:#256abf;--td:#ffffff" data-chart="map" data-key="France" data-value="18.16" data-code="FR" data-tip-label="France" data-tip-value="18.2%" data-tip-note="15th of 27"><span class="tile-code">FR</span><span class="tile-val">18</span></div>
+<div class="tile" style="grid-area:5/4;--fl:#256abf;--tl:#ffffff;--fd:#6da7ec;--td:#0b0b0b" data-chart="map" data-key="Austria" data-value="29.95" data-code="AT" data-tip-label="Austria" data-tip-value="30.0%" data-tip-note="7th of 27"><span class="tile-code">AT</span><span class="tile-val">30</span></div>
+<div class="tile" style="grid-area:5/5;--fl:#86b6ef;--tl:#0b0b0b;--fd:#1c5cab;--td:#ffffff" data-chart="map" data-key="Hungary" data-value="10.37" data-code="HU" data-tip-label="Hungary" data-tip-value="10.4%" data-tip-note="22nd of 27"><span class="tile-code">HU</span><span class="tile-val">10</span></div>
+<div class="tile" style="grid-area:5/6;--fl:#b7d3f6;--tl:#0b0b0b;--fd:#104281;--td:#ffffff" data-chart="map" data-key="Romania" data-value="5.21" data-code="RO" data-tip-label="Romania" data-tip-value="5.2%" data-tip-note="27th of 27"><span class="tile-code">RO</span><span class="tile-val">5</span></div>
+<div class="tile" style="grid-area:6/1;--fl:#86b6ef;--tl:#0b0b0b;--fd:#1c5cab;--td:#ffffff" data-chart="map" data-key="Portugal" data-value="11.54" data-code="PT" data-tip-label="Portugal" data-tip-value="11.5%" data-tip-note="21st of 27"><span class="tile-code">PT</span><span class="tile-val">12</span></div>
+<div class="tile" style="grid-area:6/2;--fl:#5598e7;--tl:#0b0b0b;--fd:#3987e5;--td:#0b0b0b" data-chart="map" data-key="Spain" data-value="20.27" data-code="ES" data-tip-label="Spain" data-tip-value="20.3%" data-tip-note="13th of 27"><span class="tile-code">ES</span><span class="tile-val">20</span></div>
+<div class="tile" style="grid-area:6/3;--fl:#6da7ec;--tl:#0b0b0b;--fd:#256abf;--td:#ffffff" data-chart="map" data-key="Italy" data-value="16.4" data-code="IT" data-tip-label="Italy" data-tip-value="16.4%" data-tip-note="18th of 27"><span class="tile-code">IT</span><span class="tile-val">16</span></div>
+<div class="tile" style="grid-area:6/4;--fl:#5598e7;--tl:#0b0b0b;--fd:#3987e5;--td:#0b0b0b" data-chart="map" data-key="Slovenia" data-value="21.61" data-code="SI" data-tip-label="Slovenia" data-tip-value="21.6%" data-tip-note="10th of 27"><span class="tile-code">SI</span><span class="tile-val">22</span></div>
+<div class="tile" style="grid-area:6/5;--fl:#6da7ec;--tl:#0b0b0b;--fd:#256abf;--td:#ffffff" data-chart="map" data-key="Croatia" data-value="15.19" data-code="HR" data-tip-label="Croatia" data-tip-value="15.2%" data-tip-note="19th of 27"><span class="tile-code">HR</span><span class="tile-val">15</span></div>
+<div class="tile" style="grid-area:6/6;--fl:#9ec5f4;--tl:#0b0b0b;--fd:#184f95;--td:#ffffff" data-chart="map" data-key="Bulgaria" data-value="8.55" data-code="BG" data-tip-label="Bulgaria" data-tip-value="8.6%" data-tip-note="25th of 27"><span class="tile-code">BG</span><span class="tile-val">9</span></div>
+<div class="tile" style="grid-area:7/3;--fl:#5598e7;--tl:#0b0b0b;--fd:#3987e5;--td:#0b0b0b" data-chart="map" data-key="Malta" data-value="21.51" data-code="MT" data-tip-label="Malta" data-tip-value="21.5%" data-tip-note="11th of 27"><span class="tile-code">MT</span><span class="tile-val">22</span></div>
+<div class="tile" style="grid-area:7/6;--fl:#9ec5f4;--tl:#0b0b0b;--fd:#184f95;--td:#ffffff" data-chart="map" data-key="Greece" data-value="8.93" data-code="GR" data-tip-label="Greece" data-tip-value="8.9%" data-tip-note="24th of 27"><span class="tile-code">GR</span><span class="tile-val">9</span></div>
+<div class="tile" style="grid-area:7/7;--fl:#9ec5f4;--tl:#0b0b0b;--fd:#184f95;--td:#ffffff" data-chart="map" data-key="Cyprus" data-value="9.27" data-code="CY" data-tip-label="Cyprus" data-tip-value="9.3%" data-tip-note="23rd of 27"><span class="tile-code">CY</span><span class="tile-val">9</span></div>
+<!-- /gen:map-tiles -->
+  </div>
+  <p class="url">sansanabria.github.io/ai-adoption-eu</p>
+  <div class="foot"><span>Made by Sandra</span><span>10 / 10</span></div>
+</section>
+
+</body>
+</html>
