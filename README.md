@@ -1,6 +1,6 @@
-# Who's actually using AI at work in Europe? — an EU Power BI case study
+# Who's actually using AI at work in Europe? An EU Power BI case study
 
-An end-to-end BI project: sourcing official EU statistics on AI adoption at work, modeling them in a Power BI semantic model, building a report, and prototyping the same story as a standalone HTML dashboard — paired with a "using AI safely at work" guidance deck.
+An end-to-end BI project: sourcing official EU statistics on AI adoption at work, modeling them in a Power BI semantic model, building a report, and prototyping the same story as a standalone HTML dashboard, paired with a "using AI safely at work" guidance deck.
 
 **Live:** [dashboard](https://sansanabria.github.io/ai-adoption-eu/) · [AI-at-work slide deck](https://sansanabria.github.io/ai-adoption-eu/presentation.html) (GitHub Pages, served from `/docs`) · downloads: [slides PDF](docs/downloads/using-ai-at-work-slides.pdf), [LinkedIn carousel PDF](docs/downloads/using-ai-at-work-linkedin.pdf).
 
@@ -10,7 +10,7 @@ An end-to-end BI project: sourcing official EU statistics on AI adoption at work
 
 | Path | What it is |
 |---|---|
-| `AI Adoption EU.pbip` + `.SemanticModel` / `.Report` | The Power BI project (PBIP format — open with Power BI Desktop) |
+| `AI Adoption EU.pbip` + `.SemanticModel` / `.Report` | The Power BI project (PBIP format, open with Power BI Desktop) |
 | `Data/` | The source CSVs the semantic model imports, plus the two raw Eurostat exports they were derived from |
 | `docs/index.html` (+ `styles.css`, `dashboard.js`) | Standalone HTML version of the dashboard: same data, a tile map of the EU, tooltips, phone-friendly; no Power BI required to view |
 | `docs/presentation.html` | The guidance deck as a keyboard-navigable web presentation (←/→, `#N` deep links, PDF download) |
@@ -21,17 +21,17 @@ An end-to-end BI project: sourcing official EU statistics on AI adoption at work
 
 ## Data sources
 
-All figures are pulled from official EU statistical releases — no scraped or synthetic data:
+All figures are pulled from official EU statistical releases, with no scraped or synthetic data:
 
-- **Eurostat**, *"Use of artificial intelligence in enterprises"* (`isoc_eb_ai`, `isoc_eb_ain2`), 2025 reference year, published 11 Dec 2025 — enterprise adoption by year, country, size, business function, and economic sector.
-- **Eurostat**, *"Individuals: use of generative AI tools"* (`isoc_ai_iaiu`), 2025 reference year — generative-AI use by purpose (private / work / education), by country.
-- **European Commission, DG ECFIN**, *"The AI-adoption divide: who benefits, who doesn't, and what it means for workers"*, Spring 2026 Economic Forecast — an ad-hoc module of the EC's monthly consumer survey (Feb–Mar 2026, n=21,207, 18 EU member states + 4 candidate countries) covering occupation-level time savings and productivity impact.
+- **Eurostat**, *"Use of artificial intelligence in enterprises"* (`isoc_eb_ai`, `isoc_eb_ain2`), 2025 reference year, published 11 Dec 2025: enterprise adoption by year, country, size, business function, and economic sector.
+- **Eurostat**, *"Individuals: use of generative AI tools"* (`isoc_ai_iaiu`), 2025 reference year: generative-AI use by purpose (private / work / education), by country.
+- **European Commission, DG ECFIN**, *"The AI-adoption divide: who benefits, who doesn't, and what it means for workers"*, Spring 2026 Economic Forecast, an ad-hoc module of the EC's monthly consumer survey (Feb–Mar 2026, n=21,207, 18 EU member states + 4 candidate countries) covering occupation-level time savings and productivity impact.
 
 Eurostat figures were pulled directly from Eurostat's public API (dataset codes above); the European Commission figures were compiled by hand from the published report, since it has no machine-readable data release.
 
 ## Power BI model
 
-- Import-mode semantic model, one table per CSV, no relationships (each table is a self-contained pre-aggregated view — country, sector, business function, enterprise size, occupation, etc.)
+- Import-mode semantic model, one table per CSV, no relationships (each table is a self-contained pre-aggregated view: country, sector, business function, enterprise size, occupation, etc.)
 - Explicit DAX measures per table (no implicit aggregation), `Decimal` types instead of `Double` for percentage/hour columns, hidden base columns behind their measures
 - A small disconnected `# Measures` table for cross-table KPIs (latest adoption %, YoY growth, top country/function)
 - Report theme (`EUAdoption-*.json`) built from the same color palette as the HTML version
@@ -55,4 +55,4 @@ Built with [Claude Code](https://claude.com/claude-code), using the [`skills-for
 
 ## License
 
-Code, HTML and slide deck: [MIT](LICENSE). The underlying data belongs to its publishers (Eurostat, European Commission) and remains subject to their reuse terms — see [Data sources](#data-sources).
+Code, HTML and slide deck: [MIT](LICENSE). The underlying data belongs to its publishers (Eurostat, European Commission) and remains subject to their reuse terms. See [Data sources](#data-sources).
