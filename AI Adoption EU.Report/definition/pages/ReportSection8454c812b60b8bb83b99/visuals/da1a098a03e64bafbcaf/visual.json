@@ -3,7 +3,7 @@
   "name": "da1a098a03e64bafbcaf",
   "position": {
     "x": 40,
-    "y": 1690,
+    "y": 1704,
     "z": 5000,
     "height": 90,
     "width": 1840,
@@ -17,7 +17,29 @@
           "properties": {
             "paragraphs": [
               {
-                "textRuns": []
+                "textRuns": [
+                  {
+                    "value": "Sources",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "9pt",
+                      "color": "#0F2A4A",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Eurostat, Use of artificial intelligence in enterprises (isoc_eb_ai, isoc_eb_ain2) and Use of AI by individuals (isoc_ai_iaiu). European Commission, DG ECFIN Spring 2026 Economic Forecast, AI at work survey (n=21,207). Enterprises with 10+ employees.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "9pt",
+                      "color": "#5A6472"
+                    }
+                  }
+                ]
               }
             ]
           }

@@ -3,7 +3,7 @@
   "name": "ea369803388b4b6293f4",
   "position": {
     "x": 40,
-    "y": 110,
+    "y": 124,
     "z": 1000,
     "height": 130,
     "width": 358,
@@ -40,7 +40,24 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1A9E8F'"
+                    }
+                  }
                 }
               }
             }
