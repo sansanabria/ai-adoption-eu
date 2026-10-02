@@ -172,7 +172,7 @@
     .card h3{font-size:17px} .badge{width:28px; height:28px; font-size:14px}
     table,pre.leak{font-size:13px} blockquote{font-size:17px}
     th,td{padding:8px 6px} tbody th{width:auto} table{table-layout:fixed}
-    .controls{width:100%} .home{display:none}
+    .controls{width:100%; flex-wrap:wrap; gap:10px} .bar{order:-1; flex:1 1 100%} #counter{min-width:0; flex:1; white-space:nowrap} .controls button{padding:8px 14px} .home{display:none}
     .dl{padding:8px 12px} .dl-long{display:none}
     .slide.title{justify-content:flex-end;
       background:linear-gradient(180deg,rgba(2,8,22,0) 0%,rgba(2,8,22,0) 42%,rgba(2,8,22,.94) 74%),
@@ -357,7 +357,7 @@ Login:     j.doe / ••••••••</pre></div>
   <div class="bar" aria-hidden="true"><i id="progress"></i></div>
   <span id="counter" aria-live="polite">1 / 12</span>
   <button id="next" type="button" aria-label="Next slide">Next →</button>
-  <a class="dl" href="downloads/using-ai-at-work-slides.pdf" download><span class="dl-long">Download </span>PDF</a>
+  <a class="dl" href="downloads/using-ai-at-work-slides.pdf" download aria-label="Download the slides as a PDF"><span class="dl-long">Download </span>PDF</a>
   <a class="home" href="./">← Dashboard</a>
 </nav>
 

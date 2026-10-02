@@ -9,6 +9,7 @@ Afterwards run tools/check_dashboard.py to confirm the page matches the data.
 from __future__ import annotations
 
 import html
+import math
 import re
 import sys
 from pathlib import Path
@@ -22,7 +23,6 @@ TARGETS = [ROOT / "docs" / "index.html", ROOT / "design" / "linkedin-carousel.ht
 # out: neither white nor ink labels reach 4.5:1 on it, and every other step clears it with one.
 RAMP = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7", "#3987e5",
         "#256abf", "#1c5cab", "#184f95", "#104281", "#0d366b"]
-MAP_MAX = 45.0            # top of the colour scale, in percent
 INK, WHITE = "#0b0b0b", "#ffffff"
 
 # Tile map: (row, column) of each member state on a 7 x 7 grid, roughly where it sits in Europe.
@@ -68,6 +68,11 @@ def esc(text: str) -> str:
     return html.escape(text, quote=True)
 
 
+def round_up(value: float, step: float = 5.0) -> float:
+    """Next multiple of `step`: the top of a scale that is read from the data, not typed in."""
+    return math.ceil(value / step) * step
+
+
 def ordinal(n: int) -> str:
     suffix = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
     return f"{n}{suffix}"
@@ -106,7 +111,7 @@ def ranked(values: dict[str, float]) -> list[tuple[str, float]]:
 
 
 def country_list(d: dict) -> str:
-    countries, eu = d["countries"], d["trend"][2025]
+    countries, eu = d["countries"], d["trend"][max(d["trend"])]
     top = max(countries.values())
     rows = []
     for rank, (name, value) in enumerate(ranked(countries), start=1):
@@ -122,11 +127,16 @@ def country_list(d: dict) -> str:
 
 def map_tiles(d: dict) -> str:
     countries = d["countries"]
+    if set(TILES) != set(countries):
+        raise ValueError(f"tile layout and country list disagree: {sorted(set(TILES) ^ set(countries))}")
+    if len(set(TILES.values())) != len(TILES):
+        raise ValueError("two countries share a tile cell")
     ranks = {name: i for i, (name, _) in enumerate(ranked(countries), start=1)}
+    top = round_up(max(countries.values()))
     tiles = []
     for name, (row, col) in sorted(TILES.items(), key=lambda kv: kv[1]):
         value = countries[name]
-        step = max(0, min(len(RAMP) - 1, round(value / MAP_MAX * (len(RAMP) - 1))))
+        step = max(0, min(len(RAMP) - 1, round(value / top * (len(RAMP) - 1))))
         light, dark = RAMP[step], RAMP[len(RAMP) - 1 - step]
         code = DISPLAY_CODE.get(d["codes"][name], d["codes"][name])
         tiles.append(
@@ -135,8 +145,6 @@ def map_tiles(d: dict) -> str:
             f'data-code="{code}" data-tip-label="{esc(name)}" data-tip-value="{fmt(value)}%" '
             f'data-tip-note="{ordinal(ranks[name])} of {len(countries)}">'
             f'<span class="tile-code">{code}</span><span class="tile-val">{fmt(value, 0)}</span></div>')
-    if len(tiles) != len(countries):
-        raise ValueError("tile layout and country list disagree")
     return "\n".join(tiles)
 
 
@@ -161,31 +169,30 @@ def size_rows(d: dict) -> str:
 
 
 def map_legend(d: dict) -> str:
-    eu = d["trend"][2025]
-    ticks = "".join(f'<span style="left:{v / MAP_MAX * 100:.1f}%">{v}%</span>' for v in (0, 40))
+    eu = d["trend"][max(d["trend"])]
+    top = round_up(max(d["countries"].values()))
+    ticks = "".join(f'<span style="left:{v / top * 100:.1f}%">{v}%</span>' for v in (0, int(top // 10 * 10)))
     return (f'<div class="scale-legend" aria-hidden="true" style="--scale-l:linear-gradient(90deg,{",".join(RAMP)});'
             f'--scale-d:linear-gradient(90deg,{",".join(reversed(RAMP))})">'
-            f'<div class="scale-bar"><span class="scale-avg" style="left:{eu / MAP_MAX * 100:.1f}%"></span></div>'
-            f'<div class="scale-ticks">{ticks}<span class="scale-avg-label" style="left:{eu / MAP_MAX * 100:.1f}%">'
+            f'<div class="scale-bar"><span class="scale-avg" style="left:{eu / top * 100:.1f}%"></span></div>'
+            f'<div class="scale-ticks">{ticks}<span class="scale-avg-label" style="left:{eu / top * 100:.1f}%">'
             'EU average</span></div></div>')
-
-
-TREND_TOP = 25.0                  # top of the y axis, in percent
-TREND_GRID = (0, 10, 20)
-TREND_LABELS = {2021: "below start", 2023: "below", 2025: "end"}  # other years: tooltip and table
 
 
 def trend_chart(d: dict) -> str:
     t = d["trend"]
     years = sorted(t)
+    top = round_up(max(t.values()) * 1.2)            # headroom for the end label
+    # Labelled points: first, second (the flat stretch) and last. The others live in tooltips and the table.
+    labels = {years[0]: "below start", years[1]: "below", years[-1]: "end"}
 
     def pos(year: int) -> tuple[float, float]:
-        return (year - years[0]) / (years[-1] - years[0]) * 100, t[year] / TREND_TOP * 100
+        return (year - years[0]) / (years[-1] - years[0]) * 100, t[year] / top * 100
 
     points = [pos(year) for year in years]
     path = " ".join(f"{'M' if i == 0 else 'L'}{x:.2f} {100 - y:.2f}" for i, (x, y) in enumerate(points))
     parts = ['<div class="trend-plot">']
-    parts += [f'<div class="trend-grid" style="--y:{v / TREND_TOP * 100:g}"><span>{v}%</span></div>' for v in TREND_GRID]
+    parts += [f'<div class="trend-grid" style="--y:{v / top * 100:g}"><span>{v}%</span></div>' for v in range(0, int(top), 10)]
     parts.append('<svg class="trend-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" '
                  f'focusable="false"><path class="trend-area" d="{path} L100 100 L0 100 Z"/>'
                  f'<path class="trend-line" d="{path}"/></svg>')
@@ -193,8 +200,8 @@ def trend_chart(d: dict) -> str:
         shown = f"{fmt(t[year])}%"
         parts.append(f'<button class="trend-pt" type="button" style="--x:{x:.2f};--y:{y:.2f}" '
                      f'aria-label="{year}: {shown}" data-tip-label="{year}" data-tip-value="{shown}"></button>')
-        if year in TREND_LABELS:
-            parts.append(f'<span class="trend-lbl {TREND_LABELS[year]}" style="--x:{x:.2f};--y:{y:.2f}" '
+        if year in labels:
+            parts.append(f'<span class="trend-lbl {labels[year]}" style="--x:{x:.2f};--y:{y:.2f}" '
                          f'aria-hidden="true" data-check="trend-{year}">{shown}</span>')
     parts.append("</div>")
     parts.append('<div class="trend-x" aria-hidden="true">'

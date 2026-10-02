@@ -21,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "Data"
 PAGE = ROOT / "docs" / "index.html"
+CAROUSEL = ROOT / "design" / "linkedin-carousel.html"
 
 
 def read_csv(name: str) -> list[dict[str, str]]:
@@ -172,22 +173,25 @@ def check_chart(name: str, rows: list[dict], truth: dict[str, float], problems: 
             problems.append(f"{name}: not sorted high to low")
 
 
-def main() -> int:
-    data = load_data()
+def check_page(path: Path, data: dict, full: bool) -> tuple[list[str], int, int]:
+    """Verify one page. The dashboard must carry every chart and figure; a derived page such as the
+    carousel only has to get the ones it does show right."""
     scan = PageScan()
-    scan.feed(PAGE.read_text(encoding="utf-8"))
+    scan.feed(path.read_text(encoding="utf-8"))
     problems: list[str] = []
 
-    check_chart("countries", scan.rows, data["countries"], problems)
-    check_chart("functions", scan.rows, data["functions"], problems)
-    check_chart("sectors", scan.rows, data["sectors"], problems)
-    check_chart("sizes", scan.rows, data["sizes"], problems, sorted_desc=False)
+    if full:
+        check_chart("countries", scan.rows, data["countries"], problems)
+        check_chart("functions", scan.rows, data["functions"], problems)
+        check_chart("sectors", scan.rows, data["sectors"], problems)
+        check_chart("sizes", scan.rows, data["sizes"], problems, sorted_desc=False)
     check_chart("map", scan.rows, data["countries"], problems, places=0, sorted_desc=False, bars=False)
 
     expected = expected_figures(data)
     for key, want in expected.items():
         if key not in scan.checks:
-            problems.append(f"missing figure data-check={key!r} (expected {want!r})")
+            if full:
+                problems.append(f"missing figure data-check={key!r} (expected {want!r})")
             continue
         for shown in scan.checks[key]:
             if shown != want:
@@ -195,12 +199,25 @@ def main() -> int:
     for key in scan.checks.keys() - expected.keys():
         problems.append(f"unknown data-check id {key!r}")
 
+    label = path.relative_to(ROOT).as_posix()
+    return [f"{label}: {p}" for p in problems], len(scan.rows), sum(len(v) for v in scan.checks.values())
+
+
+def main() -> int:
+    data = load_data()
+    problems: list[str] = []
+    marks = figures = 0
+    for path, full in ((PAGE, True), (CAROUSEL, False)):
+        found, m, f = check_page(path, data, full)
+        problems += found
+        marks += m
+        figures += f
+
     if problems:
         print(f"FAIL: {len(problems)} problem(s)")
         print("\n".join(f"  - {p}" for p in problems))
         return 1
-    figures = sum(len(v) for v in scan.checks.values())
-    print(f"OK: {len(scan.rows)} chart marks and {figures} figures match the CSVs")
+    print(f"OK: {marks} chart marks and {figures} figures on {2} pages match the CSVs")
     return 0
 
 
