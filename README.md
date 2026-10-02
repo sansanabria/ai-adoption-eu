@@ -17,6 +17,7 @@ An end-to-end BI project: sourcing official EU statistics on AI adoption at work
 | `docs/downloads/` | The deck as a 16:9 PDF, and as a 10-page portrait carousel (1080×1350) for LinkedIn document posts |
 | `design/linkedin-carousel.html` | Source of the LinkedIn carousel; print it with headless Chrome or Edge to rebuild the PDF |
 | `tools/` | `build_charts.py` regenerates the dashboard's charts from `Data/`; `check_dashboard.py` confirms every number on the dashboard and the carousel matches the CSVs |
+| `tests/` | pytest suite for both tools (`python -m pytest tests --cov=tools`) |
 | `AI At Work.pptx` | Guidance deck on using AI chat tools safely (terms, account-tier risks, what not to paste into a prompt, hallucinations, ownership of AI-written work) |
 
 ## Data sources
@@ -47,6 +48,7 @@ After changing anything in `Data/`, rebuild and verify the page:
 ```
 python tools/build_charts.py
 python tools/check_dashboard.py
+python -m pytest tests --cov=tools
 ```
 
 ## Tools used

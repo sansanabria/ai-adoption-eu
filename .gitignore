@@ -6,3 +6,8 @@
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Test and coverage output
+.pytest_cache/
+.coverage
+htmlcov/
