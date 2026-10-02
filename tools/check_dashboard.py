@@ -4,9 +4,10 @@ Run from the repo root:  python tools/check_dashboard.py
 Exits 0 when everything matches, 1 and a list of problems otherwise.
 
 The pages mark what they want checked:
-  * chart rows and map tiles:  data-chart="<chart>" data-key="<CSV label>" data-value="<CSV value>"
-    (plus data-tip-value, data-code), the shown value in a child with class hbar-val, size-val,
-    tile-val or purpose-value, and the bar length as an inline "width:NN%" on a bar element
+  * chart rows and dots:  data-chart="<chart>" data-key="<CSV label>" data-value="<CSV value>"
+    (plus data-tip-value and data-code), the shown value in a child with class hbar-val, size-val,
+    tbl-val or purpose-value, a bar length as an inline "width:NN%" on a bar element, and a dot's
+    position along its axis as "--v:NN" on the dot itself
   * single figures and claims in text:  data-check="<id>" (the expected text is computed below)
 """
 from __future__ import annotations
@@ -25,9 +26,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "Data"
 PAGE = ROOT / "docs" / "index.html"
 CAROUSEL = ROOT / "design" / "linkedin-carousel.html"
+OG_CARD = ROOT / "design" / "og-image.html"
 
 DISPLAY_CODE = {"EL": "GR"}  # Eurostat writes Greece as EL; readers expect GR
-WIDTH_TOLERANCE = 0.06       # bar widths are written with one decimal
+EXTENT_TOLERANCE = 0.06      # bar lengths and dot positions are written to one or two decimals
 
 
 class DataError(ValueError):
@@ -51,6 +53,16 @@ def fmt(value: float | str | Decimal, places: int = 1) -> str:
 def ratio_text(numerator: float, denominator: float) -> str:
     """A ratio rounded half up to a whole number, computed in decimals (no float surprises)."""
     return fmt(Decimal(str(numerator)) / Decimal(str(denominator)), 0)
+
+
+def round_up(value: float, step: float = 5.0) -> float:
+    """Next multiple of `step`: the top of a scale that is read from the data, not typed in."""
+    return math.ceil(value / step) * step
+
+
+def axis_top(countries: dict[str, float]) -> float:
+    """Top of the country axis in percent. The generator and the checker must agree on it."""
+    return round_up(max(countries.values()))
 
 
 def cross_section(name: str, key: str, value: str, where: Callable[[dict[str, str]], bool] | None = None) -> tuple[dict[str, float], str]:
@@ -170,12 +182,14 @@ def expected_figures(d: dict) -> dict[str, str]:
 
 class PageScan(HTMLParser):
     """Collect chart rows and data-check figures, tracking open elements so nested markup is read
-    whole and a bar width is only taken from a bar element inside its own row."""
+    whole and a bar length is only taken from a bar element inside its own row."""
 
-    VALUE_CLASSES = {"hbar-val", "size-val", "tile-val", "purpose-value"}
-    BAR_CLASSES = {"hbar-fill", "size-bar", "purpose-fill"}
+    VALUE_CLASSES = {"hbar-val", "size-val", "tbl-val", "purpose-value"}
+    BAR_CLASSES = {"hbar-fill", "size-bar", "purpose-fill"}      # length: inline width:NN%
+    DOT_CLASSES = {"dp-dot", "dp-avg"}                             # position: inline --v:NN on the mark itself
     VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
     WIDTH = re.compile(r"(?<![\w-])width:\s*([\d.]+)%")
+    POSITION = re.compile(r"(?<![\w-])--v:\s*([\d.]+)")
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -195,19 +209,23 @@ class PageScan(HTMLParser):
         if "data-chart" in a:
             row = {"chart": a["data-chart"], "key": a.get("data-key"), "value": a.get("data-value"),
                    "tip_value": a.get("data-tip-value"), "code": a.get("data-code"),
-                   "shown": None, "width": None, "tile_code": None}
+                   "shown": None, "extent": None, "label_code": None}
             self.rows.append(row)
         owner = row or self._owner_row()
         collectors: list[dict] = []
         if owner is not None:
-            if classes & self.BAR_CLASSES and owner["width"] is None:
+            if classes & self.BAR_CLASSES and owner["extent"] is None:
                 match = self.WIDTH.search(a.get("style", ""))
                 if match:
-                    owner["width"] = float(match.group(1))
+                    owner["extent"] = float(match.group(1))
+            if classes & self.DOT_CLASSES and owner["extent"] is None:
+                match = self.POSITION.search(a.get("style", ""))
+                if match:
+                    owner["extent"] = float(match.group(1))
             if classes & self.VALUE_CLASSES:
                 collectors.append({"kind": "shown", "ref": owner, "text": ""})
-            if "tile-code" in classes:
-                collectors.append({"kind": "tile_code", "ref": owner, "text": ""})
+            if "dp-code" in classes:
+                collectors.append({"kind": "label_code", "ref": owner, "text": ""})
         if "data-check" in a:
             collectors.append({"kind": "check", "ref": a["data-check"], "text": ""})
         self._open.append({"tag": tag, "row": row, "collectors": collectors})
@@ -232,8 +250,8 @@ class PageScan(HTMLParser):
             text = " ".join(collector["text"].split())
             if collector["kind"] == "shown":
                 collector["ref"]["shown"] = text
-            elif collector["kind"] == "tile_code":
-                collector["ref"]["tile_code"] = text
+            elif collector["kind"] == "label_code":
+                collector["ref"]["label_code"] = text
             else:
                 self.checks.setdefault(collector["ref"], []).append(text)
 
@@ -246,12 +264,13 @@ def check_chart(
     *,
     places: int = 1,
     sorted_desc: bool = True,
-    bars: bool = True,
+    extent: bool = True,
     scale_top: float | None = None,
     tips: bool = True,
+    shown: bool = True,
     codes: dict[str, str] | None = None,
 ) -> None:
-    """Compare one chart's rows with the CSV: labels, values, bar lengths, tooltips, codes, order."""
+    """Compare one chart's rows with the CSV: labels, values, lengths or positions, tooltips, codes, order."""
     got = [r for r in rows if r["chart"] == name]
     keys = [r["key"] for r in got]
     if sorted(keys) != sorted(truth):
@@ -263,20 +282,20 @@ def check_chart(
         where = f"{name}/{r['key']}"
         if r["value"] is None or abs(float(r["value"]) - true) > 1e-9:
             problems.append(f"{where}: data-value {r['value']} but CSV has {true}")
-        if r["shown"] not in (fmt(true, places), f"{fmt(true, places)}%"):
+        if shown and r["shown"] not in (fmt(true, places), f"{fmt(true, places)}%"):
             problems.append(f"{where}: shows {r['shown']!r}, expected {fmt(true, places)}")
-        if bars:
+        if extent:
             wanted = true / top * 100
-            if r["width"] is None or abs(r["width"] - wanted) > WIDTH_TOLERANCE:
-                problems.append(f"{where}: bar width {r['width']} should be {wanted:.1f}")
+            if r["extent"] is None or abs(r["extent"] - wanted) > EXTENT_TOLERANCE:
+                problems.append(f"{where}: length or position {r['extent']} should be {wanted:.1f}")
         if tips and r["tip_value"] != f"{fmt(true)}%":
             problems.append(f"{where}: tooltip shows {r['tip_value']!r}, expected {fmt(true)}%")
         if codes is not None:
             code = DISPLAY_CODE.get(codes[r["key"]], codes[r["key"]])
             if r["code"] != code:
                 problems.append(f"{where}: code {r['code']!r}, expected {code!r}")
-            if r["tile_code"] is not None and r["tile_code"] != code:
-                problems.append(f"{where}: tile label {r['tile_code']!r}, expected {code!r}")
+            if r["label_code"] is not None and r["label_code"] != code:
+                problems.append(f"{where}: label {r['label_code']!r}, expected {code!r}")
     if sorted_desc:
         values = [truth[k] for k in keys]
         if values != sorted(values, reverse=True):
@@ -301,31 +320,35 @@ def check_meta(text: str, expected: dict[str, str]) -> list[str]:
 
 def check_page(path: Path, data: dict, full: bool) -> tuple[list[str], int, int]:
     """Verify one page. The dashboard must carry every chart and figure; a derived page such as the
-    carousel only has to get the ones it does show right."""
+    carousel or the share card only has to get the ones it does show right."""
     text = path.read_text(encoding="utf-8")
     scan = PageScan()
     scan.feed(text)
     scan.close()
     problems: list[str] = []
     expected = expected_figures(data)
+    top = axis_top(data["countries"])
+    average = {"EU": data["trend"][data["year"]]}
 
     if full:
-        check_chart("countries", scan.rows, data["countries"], problems, codes=data["codes"])
+        check_chart("countries-table", scan.rows, data["countries"], problems, codes=data["codes"], extent=False)
         check_chart("functions", scan.rows, data["functions"], problems)
         check_chart("sectors", scan.rows, data["sectors"], problems)
         check_chart("sizes", scan.rows, data["sizes"], problems, sorted_desc=False)
         check_chart("genai", scan.rows, data["genai"], problems, sorted_desc=False, scale_top=100.0, tips=False)
         problems += check_meta(text, expected)
-    check_chart("map", scan.rows, data["countries"], problems, places=0, sorted_desc=False, bars=False, codes=data["codes"])
+    check_chart("countries", scan.rows, data["countries"], problems, sorted_desc=False, scale_top=top,
+                shown=False, codes=data["codes"])
+    check_chart("eu-average", scan.rows, average, problems, sorted_desc=False, scale_top=top, tips=False, shown=False)
 
     for key, want in expected.items():
         if key not in scan.checks:
             if full:
                 problems.append(f"missing figure data-check={key!r} (expected {want!r})")
             continue
-        for shown in scan.checks[key]:
-            if shown != want:
-                problems.append(f"figure {key}: page shows {shown!r}, data says {want!r}")
+        for found in scan.checks[key]:
+            if found != want:
+                problems.append(f"figure {key}: page shows {found!r}, data says {want!r}")
     for key in scan.checks.keys() - expected.keys():
         problems.append(f"unknown data-check id {key!r}")
 
@@ -341,7 +364,8 @@ def main() -> int:
         return 1
     problems: list[str] = []
     marks = figures = 0
-    for path, full in ((PAGE, True), (CAROUSEL, False)):
+    pages = [(PAGE, True), (CAROUSEL, False)] + ([(OG_CARD, False)] if OG_CARD.exists() else [])
+    for path, full in pages:
         found, m, f = check_page(path, data, full)
         problems += found
         marks += m
@@ -351,7 +375,7 @@ def main() -> int:
         print(f"FAIL: {len(problems)} problem(s)")
         print("\n".join(f"  - {p}" for p in problems))
         return 1
-    print(f"OK: {marks} chart marks and {figures} figures on 2 pages match the CSVs")
+    print(f"OK: {marks} chart marks and {figures} figures on {len(pages)} pages match the CSVs")
     return 0
 
 

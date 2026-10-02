@@ -1,10 +1,10 @@
-"""Regenerate the chart markup in docs/index.html (and the carousel) from the CSVs in Data/.
+"""Regenerate the chart markup in docs/index.html, the LinkedIn carousel and the share card from the CSVs in Data/.
 
 Run from the repo root:  python tools/build_charts.py
 Each target file marks the regions it wants filled with
     <!-- gen:NAME --> ... <!-- /gen:NAME -->
 and everything between a pair of markers is replaced. Running it twice changes nothing.
-Afterwards run tools/check_dashboard.py to confirm the page matches the data.
+Afterwards run tools/check_dashboard.py to confirm the pages match the data.
 """
 from __future__ import annotations
 
@@ -14,27 +14,14 @@ import re
 import sys
 from pathlib import Path
 
-from check_dashboard import DISPLAY_CODE, fmt, load_data
+from check_dashboard import DISPLAY_CODE, axis_top, fmt, load_data, round_up  # noqa: F401  (round_up is re-exported)
 
 ROOT = Path(__file__).resolve().parent.parent
-TARGETS = [ROOT / "docs" / "index.html", ROOT / "design" / "linkedin-carousel.html"]
-
-# Sequential blue ramp, steps 100 -> 700 (dataviz reference palette). Step 450 (#2a78d6) is left
-# out: neither white nor ink labels reach 4.5:1 on it, and every other step clears it with one.
-RAMP = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7", "#3987e5",
-        "#256abf", "#1c5cab", "#184f95", "#104281", "#0d366b"]
-INK, WHITE = "#0b0b0b", "#ffffff"
-
-# Tile map: (row, column) of each member state on a 7 x 7 grid, roughly where it sits in Europe.
-TILES = {
-    "Sweden": (1, 5), "Finland": (1, 6),
-    "Ireland": (2, 1), "Denmark": (2, 4), "Estonia": (2, 7),
-    "Netherlands": (3, 3), "Germany": (3, 4), "Poland": (3, 5), "Lithuania": (3, 6), "Latvia": (3, 7),
-    "Belgium": (4, 2), "Luxembourg": (4, 3), "Czechia": (4, 4), "Slovakia": (4, 5),
-    "France": (5, 2), "Austria": (5, 4), "Hungary": (5, 5), "Romania": (5, 6),
-    "Portugal": (6, 1), "Spain": (6, 2), "Italy": (6, 3), "Slovenia": (6, 4), "Croatia": (6, 5), "Bulgaria": (6, 6),
-    "Malta": (7, 3), "Greece": (7, 6), "Cyprus": (7, 7),
-}
+TARGETS = [
+    ROOT / "docs" / "index.html",
+    ROOT / "design" / "linkedin-carousel.html",
+    ROOT / "design" / "og-image.html",
+]
 
 FUNCTION_LABELS = {
     "Marketing or Sales": "Marketing or sales",
@@ -61,15 +48,15 @@ SIZES = [  # CSV label, label on the page, ordinal colour class
     ("Large (250+)", "Large, 250+ staff", "ord-3"),
     ("All (10+)", "All companies", "ord-ref"),
 ]
+GENAI_LABELS = {"private": "Private purposes", "work": "Professional or work purposes", "education": "Formal education"}
+
+AXIS_TICKS = (0, 10, 20, 30, 40)   # percent
+UNITS_ACROSS = 29.0                # plot width in dot diameters; the stylesheet keeps a dot at or below 1/29 of it
+DOT_GAP = 0.15                     # clear space between two dots, in dot diameters
 
 
 def esc(text: str) -> str:
     return html.escape(text, quote=True)
-
-
-def round_up(value: float, step: float = 5.0) -> float:
-    """Next multiple of `step`: the top of a scale that is read from the data, not typed in."""
-    return math.ceil(value / step) * step
 
 
 def ordinal(n: int) -> str:
@@ -77,74 +64,17 @@ def ordinal(n: int) -> str:
     return f"{n}{suffix}"
 
 
-def luminance(hex_color: str) -> float:
-    channels = [int(hex_color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
-    lin = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
-    return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
-
-
-def contrast(a: str, b: str) -> float:
-    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
-    return (hi + 0.05) / (lo + 0.05)
-
-
-def label_colour(fill: str) -> str:
-    best = max((WHITE, INK), key=lambda ink: contrast(fill, ink))
-    if contrast(fill, best) < 4.5:
-        raise ValueError(f"no label colour reaches 4.5:1 on {fill}")
-    return best
-
-
-def bar_row(chart: str, key: str, label: str, value: float, top: float, extra: str = "", dense: bool = False) -> str:
-    shown = f"{fmt(value)}%"
-    cls = "hbar-row dense" if dense else "hbar-row"
-    return (f'<div class="{cls}" data-chart="{chart}" data-key="{esc(key)}" data-value="{value}"{extra} '
-            f'data-tip-label="{esc(label)}" data-tip-value="{shown}">'
-            f'<span class="hbar-label">{esc(label)}</span>'
-            f'<span class="hbar-track"><span class="hbar-fill" style="width:{value / top * 100:.1f}%"></span></span>'
-            f'<span class="hbar-val">{shown}</span></div>')
-
-
 def ranked(values: dict[str, float]) -> list[tuple[str, float]]:
     return sorted(values.items(), key=lambda kv: kv[1], reverse=True)
 
 
-def country_list(d: dict) -> str:
-    countries, eu = d["countries"], d["trend"][d["year"]]    # same year as the countries being compared
-    top = max(countries.values())
-    rows = []
-    for rank, (name, value) in enumerate(ranked(countries), start=1):
-        code = DISPLAY_CODE.get(d["codes"][name], d["codes"][name])
-        extra = f' data-code="{code}" data-tip-note="{ordinal(rank)} of {len(countries)}"'
-        rows.append(bar_row("countries", name, name, value, top, extra, dense=True))
-    head = ('<div class="hbar-row dense ref-head" aria-hidden="true"><span></span><span class="hbar-track">'
-            f'<span class="ref-label">EU average <span data-check="eu-average">{fmt(eu)}%</span></span>'
-            '</span><span></span></div>')
-    return (f'<div class="hbar-chart dense has-ref" id="country-chart" style="--ref:{eu / top * 100:.1f}%">\n'
-            + "\n".join([head, *rows]) + "\n</div>")
-
-
-def map_tiles(d: dict) -> str:
-    countries = d["countries"]
-    if set(TILES) != set(countries):
-        raise ValueError(f"tile layout and country list disagree: {sorted(set(TILES) ^ set(countries))}")
-    if len(set(TILES.values())) != len(TILES):
-        raise ValueError("two countries share a tile cell")
-    ranks = {name: i for i, (name, _) in enumerate(ranked(countries), start=1)}
-    top = round_up(max(countries.values()))
-    tiles = []
-    for name, (row, col) in sorted(TILES.items(), key=lambda kv: kv[1]):
-        value = countries[name]
-        step = max(0, min(len(RAMP) - 1, round(value / top * (len(RAMP) - 1))))
-        light, dark = RAMP[step], RAMP[len(RAMP) - 1 - step]
-        code = DISPLAY_CODE.get(d["codes"][name], d["codes"][name])
-        tiles.append(
-            f'<div class="tile" style="grid-area:{row}/{col};--fl:{light};--tl:{label_colour(light)};'
-            f'--fd:{dark};--td:{label_colour(dark)}" data-chart="map" data-key="{esc(name)}" data-value="{value}" '
-            f'data-code="{code}" data-tip-label="{esc(name)}" data-tip-value="{fmt(value)}%" '
-            f'data-tip-note="{ordinal(ranks[name])} of {len(countries)}">'
-            f'<span class="tile-code">{code}</span><span class="tile-val">{fmt(value, 0)}</span></div>')
-    return "\n".join(tiles)
+def bar_row(chart: str, key: str, label: str, value: float, top: float) -> str:
+    shown = f"{fmt(value)}%"
+    return (f'<div class="hbar-row" data-chart="{chart}" data-key="{esc(key)}" data-value="{value}" '
+            f'data-tip-label="{esc(label)}" data-tip-value="{shown}">'
+            f'<span class="hbar-label">{esc(label)}</span>'
+            f'<span class="hbar-track"><span class="hbar-fill" style="width:{value / top * 100:.1f}%"></span></span>'
+            f'<span class="hbar-val">{shown}</span></div>')
 
 
 def simple_bars(chart: str, values: dict[str, float], labels: dict[str, str]) -> str:
@@ -167,15 +97,92 @@ def size_rows(d: dict) -> str:
     return "\n".join(rows)
 
 
-def map_legend(d: dict) -> str:
-    eu = d["trend"][d["year"]]
-    top = round_up(max(d["countries"].values()))
-    ticks = "".join(f'<span style="left:{v / top * 100:.1f}%">{v}%</span>' for v in (0, int(top // 10 * 10)))
-    return (f'<div class="scale-legend" aria-hidden="true" style="--scale-l:linear-gradient(90deg,{",".join(RAMP)});'
-            f'--scale-d:linear-gradient(90deg,{",".join(reversed(RAMP))})">'
-            f'<div class="scale-bar"><span class="scale-avg" style="left:{eu / top * 100:.1f}%"></span></div>'
-            f'<div class="scale-ticks">{ticks}<span class="scale-avg-label" style="left:{eu / top * 100:.1f}%">'
-            'EU average</span></div></div>')
+def swarm(positions: list[float], gap: float = DOT_GAP) -> list[float]:
+    """Vertical offsets, in dot diameters, that stop equal sized dots from overlapping.
+
+    `positions` are the dots' horizontal centres in dot diameters, in the order they are placed.
+    Each dot takes the free spot nearest the centre line, which gives a compact, even swarm."""
+    need = 1.0 + gap
+    placed: list[tuple[float, float]] = []
+    for x in positions:
+        candidates = {0.0}
+        for px, py in placed:
+            dx = abs(x - px)
+            if dx < need:
+                reach = math.sqrt(need * need - dx * dx)
+                candidates.update((py + reach, py - reach))
+        free = [y for y in candidates if all((x - px) ** 2 + (y - py) ** 2 >= need * need - 1e-9 for px, py in placed)]
+        fallback = max((py for _, py in placed), default=0.0) + need
+        placed.append((x, min(free, key=lambda y: (abs(y), y)) if free else fallback))
+    return [y for _, y in placed]
+
+
+def dot_plot(d: dict) -> str:
+    """One dot per country on a single axis, the EU average as a line, the two extremes labelled."""
+    countries, codes = d["countries"], d["codes"]
+    eu = d["trend"][d["year"]]                               # same year as the countries being compared
+    top = axis_top(countries)
+    ordered = sorted(countries.items(), key=lambda kv: kv[1])    # low to high: the order the dots are placed in
+    order_high_to_low = ranked(countries)
+    ranks = {name: i for i, (name, _) in enumerate(order_high_to_low, start=1)}
+    (high, high_value), (low, low_value) = order_high_to_low[0], order_high_to_low[-1]
+
+    offsets = swarm([value / top * UNITS_ACROSS for _, value in ordered])
+    middle = (max(offsets) + min(offsets)) / 2
+    y_of = {name: y - middle for (name, _), y in zip(ordered, offsets)}
+    span = max(y_of.values()) - min(y_of.values()) + 1.0          # height of the field in dot diameters
+    highest_edge = min(y_of.values())
+
+    def position(value: float) -> str:
+        return f"{value / top * 100:.2f}"
+
+    dots = []
+    for name, value in ordered:
+        code = DISPLAY_CODE.get(codes[name], codes[name])
+        role = " hi" if name == high else " lo" if name == low else ""
+        dots.append(
+            f'<span class="dp-dot{role}" data-chart="countries" data-key="{esc(name)}" data-value="{value}" '
+            f'data-code="{code}" data-tip-label="{esc(name)}" data-tip-value="{fmt(value)}%" '
+            f'data-tip-note="{ordinal(ranks[name])} of {len(countries)}" '
+            f'style="--v:{position(value)};--y:{y_of[name]:.3f}"><span class="dp-code">{code}</span></span>')
+
+    def callout(kind: str, name: str, value: float, checks: tuple[str, str]) -> str:
+        lead = y_of[name] - highest_edge                           # gap from the field's top edge down to this dot
+        return (f'<span class="dp-call dp-call-{kind}" style="--v:{position(value)};--lead:{lead:.3f}">'
+                f'<span data-check="{checks[0]}">{esc(name)}</span> '
+                f'<b data-check="{checks[1]}">{fmt(value, 0)}%</b></span>')
+
+    grid = "".join(f'<span class="dp-grid" style="--v:{position(t)}"></span>' for t in AXIS_TICKS if t <= top)
+    axis = "".join(f'<span style="--v:{position(t)}">{t}%</span>' for t in AXIS_TICKS if t <= top)
+    label = (f"Each dot is an EU country, placed by the share of its companies using AI. {high} is highest at "
+             f"{fmt(high_value, 0)}% and {low} lowest at {fmt(low_value, 0)}%. The ranked list below has every value.")
+    return (
+        f'<div class="dp" style="--span:{span:.3f}"><div class="dp-inner">\n'
+        f'<div class="dp-avg-row"><span class="dp-avg-label" style="--v:{position(eu)}">EU average '
+        f'<b data-check="eu-average">{fmt(eu)}%</b></span></div>\n'
+        f'<div class="dp-call-row">{callout("lo", low, low_value, ("country-bottom", "ro"))}'
+        f'{callout("hi", high, high_value, ("country-top", "dk"))}</div>\n'
+        f'<div class="dp-field" role="img" aria-label="{esc(label)}">{grid}'
+        f'<span class="dp-avg" data-chart="eu-average" data-key="EU" data-value="{eu}" style="--v:{position(eu)}"></span>\n'
+        + "\n".join(dots) +
+        f'\n</div>\n<div class="dp-axis" aria-hidden="true">{axis}</div>\n</div></div>'
+    )
+
+
+def country_table(d: dict) -> str:
+    """Every country, ranked: the full list behind the dot plot, and its accessible twin."""
+    countries, codes = d["countries"], d["codes"]
+    rows = []
+    for rank, (name, value) in enumerate(ranked(countries), start=1):
+        code = DISPLAY_CODE.get(codes[name], codes[name])
+        rows.append(
+            f'<li data-chart="countries-table" data-key="{esc(name)}" data-value="{value}" data-code="{code}" '
+            f'data-tip-label="{esc(name)}" data-tip-value="{fmt(value)}%" '
+            f'data-tip-note="{ordinal(rank)} of {len(countries)}">'
+            f'<span class="rk">{rank}</span><span class="nm">{esc(name)}</span>'
+            f'<span class="tbl-val">{fmt(value)}%</span></li>')
+    return ('<ol class="rank-list" aria-label="All countries, ranked by share of companies using AI">\n'
+            + "\n".join(rows) + "\n</ol>")
 
 
 def trend_chart(d: dict) -> str:
@@ -214,9 +221,6 @@ def trend_chart(d: dict) -> str:
     return "\n".join(parts)
 
 
-GENAI_LABELS = {"private": "Private purposes", "work": "Professional or work purposes", "education": "Formal education"}
-
-
 def genai_meters(d: dict) -> str:
     return "\n".join(
         f'<div data-chart="genai" data-key="{key}" data-value="{value}">'
@@ -231,9 +235,8 @@ def build_snippets() -> dict[str, str]:
     d = load_data()
     return {
         "trend": trend_chart(d),
-        "countries-list": country_list(d),
-        "map-tiles": map_tiles(d),
-        "map-legend": map_legend(d),
+        "dotplot": dot_plot(d),
+        "country-table": country_table(d),
         "functions": simple_bars("functions", d["functions"], FUNCTION_LABELS),
         "sectors": simple_bars("sectors", d["sectors"], SECTOR_LABELS),
         "sizes": size_rows(d),
@@ -243,8 +246,9 @@ def build_snippets() -> dict[str, str]:
 
 # Regions each target must contain, so a deleted or misspelt marker fails loudly instead of leaving stale charts.
 REQUIRED_REGIONS = {
-    "docs/index.html": {"trend", "sizes", "functions", "sectors", "countries-list", "map-tiles", "map-legend", "genai"},
-    "design/linkedin-carousel.html": {"map-tiles"},
+    "docs/index.html": {"trend", "sizes", "functions", "sectors", "dotplot", "country-table", "genai"},
+    "design/linkedin-carousel.html": {"dotplot"},
+    "design/og-image.html": {"dotplot"},
 }
 OPEN_MARKER = re.compile(r"<!--\s*gen:([\w-]+)\s*-->")
 CLOSE_MARKER = re.compile(r"<!--\s*/gen:([\w-]+)\s*-->")

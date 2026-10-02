@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Share card for the dashboard</title>
+<!--
+  Source of docs/assets/og-image.png (1200 x 627), the preview card shown when the dashboard is shared.
+  The dot plot is filled in by tools/build_charts.py. To rebuild the PNG:
+    msedge --headless=new --hide-scrollbars --window-size=1200,627 --virtual-time-budget=5000 --screenshot=docs/assets/og-image.png design/og-image.html
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#0d0d0d; --ink:#ffffff; --ink-2:#c3c2b7; --muted:#8f8d86; --line:rgba(255,255,255,.12);
+    --link:#86b6ef;
+  }
+  *{box-sizing:border-box;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{width:1200px;height:627px;overflow:hidden;background:var(--bg)}
+  body{font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+  .card{
+    position:relative;width:1200px;height:627px;padding:64px 60px;
+    display:grid;grid-template-columns:480px 1fr;gap:56px;align-items:center;
+    background:radial-gradient(900px 480px at 85% 45%,rgba(57,135,229,.14),transparent 70%),var(--bg);
+  }
+  .eyebrow{font-size:15px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--link)}
+  h1{font-family:Newsreader,Georgia,serif;font-weight:600;font-size:58px;line-height:1.05;letter-spacing:-.01em;margin:16px 0 26px}
+  .facts{font-size:25px;line-height:1.45;color:var(--ink-2)}
+  .facts b{color:var(--ink);font-weight:600}
+  .caption{font-size:15px;color:var(--muted);margin-top:30px}
+  .url{position:absolute;left:60px;bottom:42px;font-size:21px;font-weight:600;color:var(--link)}
+
+  /* the dashboard's dot plot at card size */
+  .dp{--d:18px}
+  .dp-inner{margin-inline:calc(var(--d) / 2)}
+  .dp-avg-row{position:relative;height:28px}
+  .dp-avg-label{position:absolute;left:calc(var(--v) * 1%);bottom:3px;transform:translateX(-50%);font-size:14px;color:var(--ink-2);white-space:nowrap}
+  .dp-avg-label b{color:var(--ink);font-weight:700}
+  .dp-call-row{position:relative;height:34px}
+  .dp-call{position:absolute;bottom:3px;font-size:17px;font-weight:600;white-space:nowrap}
+  .dp-call::after{content:"";position:absolute;top:100%;height:calc(var(--lead) * var(--d));border-left:1px solid var(--muted)}
+  .dp-call-lo{left:calc(var(--v) * 1%)}
+  .dp-call-lo::after{left:0}
+  .dp-call-hi{right:calc((100 - var(--v)) * 1%)}
+  .dp-call-hi::after{right:0}
+  .dp-field{position:relative;height:calc(var(--span) * var(--d))}
+  .dp-grid{position:absolute;top:0;bottom:0;left:calc(var(--v) * 1%);border-left:1px solid var(--line)}
+  .dp-avg{position:absolute;top:-34px;bottom:0;left:calc(var(--v) * 1%);border-left:1.5px solid var(--ink-2)}
+  .dp-dot{
+    position:absolute;left:calc(var(--v) * 1%);top:calc(50% + var(--y) * var(--d));
+    width:var(--d);height:var(--d);margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
+    border-radius:50%;background:#3987e5;box-shadow:0 0 0 2px var(--bg);
+  }
+  .dp-dot.hi,.dp-dot.lo{background:#c98500}
+  .dp-code{display:none}
+  .dp-axis{position:relative;height:24px;margin-top:8px}
+  .dp-axis span{position:absolute;left:calc(var(--v) * 1%);transform:translateX(-50%);font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="copy">
+    <p class="eyebrow">Eurostat &amp; European Commission data</p>
+    <h1>Who's actually using AI at work in Europe?</h1>
+    <p class="facts"><b data-check="one-in-n-now">1 in 5</b> EU companies now uses AI.<br>From <b data-check="dk">42%</b> in Denmark to <b data-check="ro">5%</b> in Romania.</p>
+    <p class="caption">Each dot is an EU country, 2025</p>
+  </div>
+  <div class="plot">
+<!-- gen:dotplot -->
+<div class="dp" style="--span:4.760"><div class="dp-inner">
+<div class="dp-avg-row"><span class="dp-avg-label" style="--v:44.33">EU average <b data-check="eu-average">20.0%</b></span></div>
+<div class="dp-call-row"><span class="dp-call dp-call-lo" style="--v:11.58;--lead:2.196"><span data-check="country-bottom">Romania</span> <b data-check="ro">5%</b></span><span class="dp-call dp-call-hi" style="--v:93.40;--lead:2.196"><span data-check="country-top">Denmark</span> <b data-check="dk">42%</b></span></div>
+<div class="dp-field" role="img" aria-label="Each dot is an EU country, placed by the share of its companies using AI. Denmark is highest at 42% and Romania lowest at 5%. The ranked list below has every value."><span class="dp-grid" style="--v:0.00"></span><span class="dp-grid" style="--v:22.22"></span><span class="dp-grid" style="--v:44.44"></span><span class="dp-grid" style="--v:66.67"></span><span class="dp-grid" style="--v:88.89"></span><span class="dp-avg" data-chart="eu-average" data-key="EU" data-value="19.95" style="--v:44.33"></span>
+<span class="dp-dot lo" data-chart="countries" data-key="Romania" data-value="5.21" data-code="RO" data-tip-label="Romania" data-tip-value="5.2%" data-tip-note="27th of 27" style="--v:11.58;--y:0.316"><span class="dp-code">RO</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Poland" data-value="8.36" data-code="PL" data-tip-label="Poland" data-tip-value="8.4%" data-tip-note="26th of 27" style="--v:18.58;--y:0.316"><span class="dp-code">PL</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Bulgaria" data-value="8.55" data-code="BG" data-tip-label="Bulgaria" data-tip-value="8.6%" data-tip-note="25th of 27" style="--v:19.00;--y:-0.828"><span class="dp-code">BG</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Greece" data-value="8.93" data-code="GR" data-tip-label="Greece" data-tip-value="8.9%" data-tip-note="24th of 27" style="--v:19.84;--y:1.406"><span class="dp-code">GR</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Cyprus" data-value="9.27" data-code="CY" data-tip-label="Cyprus" data-tip-value="9.3%" data-tip-note="23rd of 27" style="--v:20.60;--y:-1.880"><span class="dp-code">CY</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Hungary" data-value="10.37" data-code="HU" data-tip-label="Hungary" data-tip-value="10.4%" data-tip-note="22nd of 27" style="--v:23.04;--y:0.316"><span class="dp-code">HU</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Portugal" data-value="11.54" data-code="PT" data-tip-label="Portugal" data-tip-value="11.5%" data-tip-note="21st of 27" style="--v:25.64;--y:-0.552"><span class="dp-code">PT</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Latvia" data-value="12.21" data-code="LV" data-tip-label="Latvia" data-tip-value="12.2%" data-tip-note="20th of 27" style="--v:27.13;--y:0.513"><span class="dp-code">LV</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Croatia" data-value="15.19" data-code="HR" data-tip-label="Croatia" data-tip-value="15.2%" data-tip-note="19th of 27" style="--v:33.76;--y:0.316"><span class="dp-code">HR</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Italy" data-value="16.4" data-code="IT" data-tip-label="Italy" data-tip-value="16.4%" data-tip-note="18th of 27" style="--v:36.44;--y:-0.529"><span class="dp-code">IT</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Czechia" data-value="17.6" data-code="CZ" data-tip-label="Czechia" data-tip-value="17.6%" data-tip-note="17th of 27" style="--v:39.11;--y:0.322"><span class="dp-code">CZ</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Slovakia" data-value="18.0" data-code="SK" data-tip-label="Slovakia" data-tip-value="18.0%" data-tip-note="16th of 27" style="--v:40.00;--y:1.442"><span class="dp-code">SK</span></span>
+<span class="dp-dot" data-chart="countries" data-key="France" data-value="18.16" data-code="FR" data-tip-label="France" data-tip-value="18.2%" data-tip-note="15th of 27" style="--v:40.36;--y:-0.770"><span class="dp-code">FR</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Ireland" data-value="19.64" data-code="IE" data-tip-label="Ireland" data-tip-value="19.6%" data-tip-note="14th of 27" style="--v:43.64;--y:0.316"><span class="dp-code">IE</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Spain" data-value="20.27" data-code="ES" data-tip-label="Spain" data-tip-value="20.3%" data-tip-note="13th of 27" style="--v:45.04;--y:-0.760"><span class="dp-code">ES</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Lithuania" data-value="21.3" data-code="LT" data-tip-label="Lithuania" data-tip-value="21.3%" data-tip-note="12th of 27" style="--v:47.33;--y:0.738"><span class="dp-code">LT</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Malta" data-value="21.51" data-code="MT" data-tip-label="Malta" data-tip-value="21.5%" data-tip-note="11th of 27" style="--v:47.80;--y:1.880"><span class="dp-code">MT</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Slovenia" data-value="21.61" data-code="SI" data-tip-label="Slovenia" data-tip-value="21.6%" data-tip-note="10th of 27" style="--v:48.02;--y:-1.520"><span class="dp-code">SI</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Estonia" data-value="23.4" data-code="EE" data-tip-label="Estonia" data-tip-value="23.4%" data-tip-note="9th of 27" style="--v:52.00;--y:0.316"><span class="dp-code">EE</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Germany" data-value="25.97" data-code="DE" data-tip-label="Germany" data-tip-value="26.0%" data-tip-note="8th of 27" style="--v:57.71;--y:0.316"><span class="dp-code">DE</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Austria" data-value="29.95" data-code="AT" data-tip-label="Austria" data-tip-value="30.0%" data-tip-note="7th of 27" style="--v:66.56;--y:0.316"><span class="dp-code">AT</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Netherlands" data-value="33.21" data-code="NL" data-tip-label="Netherlands" data-tip-value="33.2%" data-tip-note="6th of 27" style="--v:73.80;--y:0.316"><span class="dp-code">NL</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Luxembourg" data-value="33.61" data-code="LU" data-tip-label="Luxembourg" data-tip-value="33.6%" data-tip-note="5th of 27" style="--v:74.69;--y:-0.805"><span class="dp-code">LU</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Belgium" data-value="34.54" data-code="BE" data-tip-label="Belgium" data-tip-value="34.5%" data-tip-note="4th of 27" style="--v:76.76;--y:1.083"><span class="dp-code">BE</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Sweden" data-value="35.04" data-code="SE" data-tip-label="Sweden" data-tip-value="35.0%" data-tip-note="3rd of 27" style="--v:77.87;--y:-0.021"><span class="dp-code">SE</span></span>
+<span class="dp-dot" data-chart="countries" data-key="Finland" data-value="37.82" data-code="FI" data-tip-label="Finland" data-tip-value="37.8%" data-tip-note="2nd of 27" style="--v:84.04;--y:0.316"><span class="dp-code">FI</span></span>
+<span class="dp-dot hi" data-chart="countries" data-key="Denmark" data-value="42.03" data-code="DK" data-tip-label="Denmark" data-tip-value="42.0%" data-tip-note="1st of 27" style="--v:93.40;--y:0.316"><span class="dp-code">DK</span></span>
+</div>
+<div class="dp-axis" aria-hidden="true"><span style="--v:0.00">0%</span><span style="--v:22.22">10%</span><span style="--v:44.44">20%</span><span style="--v:66.67">30%</span><span style="--v:88.89">40%</span></div>
+</div></div>
+<!-- /gen:dotplot -->
+  </div>
+  <p class="url">sansanabria.github.io/ai-adoption-eu</p>
+</div>
+</body>
+</html>
