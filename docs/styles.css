@@ -8,7 +8,7 @@
   --surface-raised:#ffffff;
   --text-primary:#0b0b0b;
   --text-secondary:#52514e;
-  --muted:#898781;
+  --muted:#6b6a65;
   --grid:#e1e0d9;
   --border:rgba(11,11,11,0.10);
   --blue:#2a78d6;
@@ -20,6 +20,7 @@
   --warning:#fab219;
   --warning-text:#8a5a00;
   --critical:#d03b3b;
+  --critical-text:#b02a2a;
   --good-wash:#e7f7e7;
   --warning-wash:#fff6e2;
   --critical-wash:#fbe9e9;
@@ -49,6 +50,7 @@
     --success-text:#0ca30c;
     --warning-text:#fab219;
     --critical:#e66767;
+    --critical-text:#e66767;
     --good-wash:#122a12;
     --warning-wash:#332a10;
     --critical-wash:#331616;
@@ -80,6 +82,7 @@
   --success-text:#0ca30c;
   --warning-text:#fab219;
   --critical:#e66767;
+  --critical-text:#e66767;
   --good-wash:#122a12;
   --warning-wash:#332a10;
   --critical-wash:#331616;
@@ -278,7 +281,7 @@ h1{
 .chip.good .dot{background:var(--success-text)}
 .chip.warning{background:var(--warning-wash);color:var(--warning-text)}
 .chip.warning .dot{background:var(--warning)}
-.chip.critical{background:var(--critical-wash);color:var(--critical)}
+.chip.critical{background:var(--critical-wash);color:var(--critical-text)}
 .chip.critical .dot{background:var(--critical)}
 
 /* ---------- generative AI purposes (meters) ---------- */

@@ -35,6 +35,8 @@
     var top = y + gap;
     if (left + width > window.innerWidth - 8) left = x - width - gap;
     if (top + height > window.innerHeight - 8) top = y - height - gap;
+    left = Math.min(left, window.innerWidth - width - 8);
+    top = Math.min(top, window.innerHeight - height - 8);
     tip.style.transform = "translate(" + Math.max(8, left) + "px," + Math.max(8, top) + "px)";
   }
 
@@ -72,7 +74,7 @@
   });
 
   document.addEventListener("pointermove", function (event) {
-    if (current && event.pointerType !== "touch") place(event.clientX, event.clientY);
+    if (current && event.pointerType !== "touch" && markFrom(event) === current) place(event.clientX, event.clientY);
   });
 
   document.addEventListener("pointerout", function (event) {
@@ -102,6 +104,8 @@
   });
 
   window.addEventListener("scroll", function () {
-    if (current && document.activeElement !== current) hide();
+    if (!current) return;
+    if (document.activeElement === current) show(current);
+    else hide();
   }, { passive: true });
 })();

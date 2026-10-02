@@ -24,7 +24,9 @@
   :root{
     color-scheme: light;
     --page:#f9f9f7; --surface:#fcfcfb; --surface-raised:#ffffff;
-    --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#898781;
+    --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#6b6a65;
+    --link:#1c5cab; --aqua-text:#127a55;
+    --badge-1:#1c5cab; --badge-2:#6a4bd0; --badge-teal:#127a55;
     --grid:#e1e0d9; --border:rgba(11,11,11,0.10);
     --blue:#2a78d6; --blue-dark:#184f95; --blue-wash:#e8f0fb;
     --aqua:#1baf7a; --aqua-wash:#e3f6ee;
@@ -36,6 +38,7 @@
       color-scheme: dark;
       --page:#0d0d0d; --surface:#1a1a19; --surface-raised:#212120;
       --text-primary:#ffffff; --text-secondary:#c3c2b7; --muted:#8f8d86;
+      --link:#86b6ef; --aqua-text:#4dc79c;
       --grid:#2c2c2a; --border:rgba(255,255,255,0.10);
       --blue:#3987e5; --blue-dark:#86b6ef; --blue-wash:#152a3f;
       --aqua:#199e70; --aqua-wash:#10281f;
@@ -73,8 +76,8 @@
   .slide:focus{outline:none}
   .slide h2{font-size:calc(var(--u)*3.6)}
   .sub{color:var(--text-secondary); font-size:calc(var(--u)*1.8)}
-  .eyebrow{font-size:calc(var(--u)*1.3); font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--blue)}
-  .pageno{position:absolute; right:calc(var(--u)*2.4); bottom:calc(var(--u)*1.6); color:var(--muted); font-size:calc(var(--u)*1.3)}
+  .eyebrow{font-size:max(11px, calc(var(--u)*1.3)); font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--link)}
+  .pageno{position:absolute; right:calc(var(--u)*2.4); bottom:calc(var(--u)*1.6); color:var(--muted); font-size:max(11px, calc(var(--u)*1.3))}
 
   .grid{display:grid; gap:calc(var(--u)*1.6); flex:1; min-height:0}
   .cols-2{grid-template-columns:1fr 1fr}
@@ -86,21 +89,21 @@
   }
   .card h3{font-size:calc(var(--u)*2); font-weight:600; display:flex; align-items:center; gap:calc(var(--u)*1)}
   .card p{color:var(--text-secondary)}
-  .card .eg{margin-top:auto; font-size:calc(var(--u)*1.35); color:var(--muted); font-style:italic}
+  .card .eg{margin-top:auto; font-size:max(12px, calc(var(--u)*1.35)); color:var(--muted); font-style:italic}
   .badge{
     flex:none; width:calc(var(--u)*3.2); height:calc(var(--u)*3.2); border-radius:50%;
     display:grid; place-items:center; color:#fff; font-weight:700; font-size:calc(var(--u)*1.6);
-    background:linear-gradient(135deg,var(--blue),#7a5be0);
+    background:linear-gradient(135deg,var(--badge-1),var(--badge-2));
   }
-  .badge.teal{background:linear-gradient(135deg,var(--aqua),var(--blue))}
-  .badge.alert{background:linear-gradient(135deg,var(--critical),#eb6834)}
+  .badge.teal{background:linear-gradient(135deg,var(--badge-teal),var(--badge-1))}
+  .badge.alert{background:linear-gradient(135deg,#b02a2a,#d03b3b)}
   .callout{
     background:var(--blue-wash); border-left:calc(var(--u)*.4) solid var(--blue);
     border-radius:calc(var(--u)*.8); padding:calc(var(--u)*1.4) calc(var(--u)*1.8); color:var(--text-primary);
   }
   .callout.teal{background:var(--aqua-wash); border-left-color:var(--aqua)}
   .callout.bad{background:var(--critical-wash); border-left-color:var(--critical)}
-  .note{color:var(--muted); font-size:calc(var(--u)*1.25)}
+  .note{color:var(--muted); font-size:max(11px, calc(var(--u)*1.25))}
 
   /* Title slide: the PowerPoint's artwork, dark in both themes */
   .slide.title{justify-content:center; gap:calc(var(--u)*2); color:#fff;
@@ -111,8 +114,8 @@
   .slide.closing{justify-content:center; align-items:center; text-align:center;
     background:linear-gradient(135deg,var(--aqua-wash),var(--surface) 60%)}
   .slide.closing h2{font-size:calc(var(--u)*4); max-width:75%}
-  .deck-cta{font-size:calc(var(--u)*1.7); color:var(--text-secondary)}
-  .deck-cta a{color:var(--blue); font-weight:600; text-underline-offset:.2em}
+  .deck-cta{font-size:max(14px, calc(var(--u)*1.7)); color:var(--text-secondary)}
+  .deck-cta a{color:var(--link); font-weight:600; text-underline-offset:.2em}
 
   /* Agenda */
   .agenda{list-style:none; padding:0; display:grid; grid-template-columns:1fr 1fr; grid-auto-flow:column;
@@ -121,7 +124,7 @@
     background:var(--surface-raised); border:1px solid var(--border); border-radius:calc(var(--u)*1);
     padding:0 calc(var(--u)*1.6); font-size:calc(var(--u)*1.8); font-weight:500}
   .agenda a:hover,.agenda a:focus-visible{border-color:var(--blue); outline:none}
-  .agenda .n{color:var(--blue); font-weight:700; font-variant-numeric:tabular-nums}
+  .agenda .n{color:var(--link); font-weight:700; font-variant-numeric:tabular-nums}
 
   /* Table */
   table{width:100%; border-collapse:collapse; background:var(--surface-raised); border-radius:calc(var(--u)*1); overflow:hidden;
@@ -133,7 +136,7 @@
 
   pre.leak{font-family:ui-monospace,Consolas,monospace; font-size:calc(var(--u)*1.7); line-height:1.6; white-space:pre-wrap;
     background:var(--critical-wash); border:1px dashed var(--critical); border-radius:calc(var(--u)*1); padding:calc(var(--u)*1.6)}
-  .tag{display:inline-block; background:var(--critical); color:#fff; font-weight:700; font-size:calc(var(--u)*1.2);
+  .tag{display:inline-block; background:var(--critical); color:#fff; font-weight:700; font-size:max(11px, calc(var(--u)*1.2));
     letter-spacing:.12em; padding:.2em .8em; border-radius:99px; margin-bottom:calc(var(--u)*.8); font-family:Inter,sans-serif}
   blockquote{font-family:Newsreader,Georgia,serif; font-style:italic; font-size:calc(var(--u)*1.9);
     border-left:calc(var(--u)*.4) solid var(--aqua); padding-left:calc(var(--u)*1.4); color:var(--text-primary)}
@@ -157,13 +160,15 @@
   .dl:focus-visible,.home:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
   .home{color:var(--muted); font-size:13px; text-decoration:none}
 
-  /* Phones: drop 16:9, let each slide scroll */
-  @media (max-width:760px){
+  /* Phones, small tablets and landscape phones: drop 16:9, let each slide scroll */
+  @media (max-width:900px), (max-height:520px){
     body{overflow:auto; justify-content:flex-start}
-    .stage{--u:4.6px; width:100%; aspect-ratio:auto; height:calc(100vh - 100px); height:calc(100dvh - 100px); min-height:420px}
+    .stage{--u:4.6px; width:100%; aspect-ratio:auto; height:calc(100vh - 100px); height:calc(100dvh - 100px)}
     .slide{overflow-y:auto; font-size:15px; padding:20px 16px}
     .slide h2{font-size:26px} .slide.title h1{font-size:38px} .slide.closing h2{font-size:26px}
     .sub,.slide.title .sub{font-size:16px; max-width:100%}
+    .eyebrow,.note,.tag{font-size:12px} .card .eg{font-size:13px} .deck-cta{font-size:16px}
+    .pageno{display:none}   /* the counter below already says where you are */
     .cols-2,.cols-3,.agenda{grid-template-columns:1fr}
     .rows-3{grid-template-rows:none}
     .slide>*{flex-shrink:0} .grid{flex:none; min-height:auto}
@@ -172,7 +177,7 @@
     .card h3{font-size:17px} .badge{width:28px; height:28px; font-size:14px}
     table,pre.leak{font-size:13px} blockquote{font-size:17px}
     th,td{padding:8px 6px} tbody th{width:auto} table{table-layout:fixed}
-    .controls{width:100%; flex-wrap:wrap; gap:10px} .bar{order:-1; flex:1 1 100%} #counter{min-width:0; flex:1; white-space:nowrap} .controls button{padding:8px 14px} .home{display:none}
+    .controls{width:100%; flex-wrap:wrap; gap:10px} .bar{order:-1; flex:1 1 100%} #counter{min-width:0; flex:1; white-space:nowrap} .controls button{padding:8px 14px} .home{flex:1 1 100%; text-align:center}
     .dl{padding:8px 12px} .dl-long{display:none}
     .slide.title{justify-content:flex-end;
       background:linear-gradient(180deg,rgba(2,8,22,0) 0%,rgba(2,8,22,0) 42%,rgba(2,8,22,.94) 74%),
@@ -181,7 +186,7 @@
 
   @media print{
     @page{size:landscape; margin:0}
-    :root{color-scheme:light; --page:#fff; --surface:#fcfcfb; --surface-raised:#fff; --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#898781; --grid:#e1e0d9; --border:rgba(11,11,11,.10); --blue:#2a78d6; --blue-dark:#184f95; --blue-wash:#e8f0fb; --aqua:#1baf7a; --aqua-wash:#e3f6ee; --critical:#d03b3b; --critical-wash:#fbe9e9}
+    :root{color-scheme:light; --page:#fff; --surface:#fcfcfb; --surface-raised:#fff; --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#6b6a65; --link:#1c5cab; --aqua-text:#127a55; --grid:#e1e0d9; --border:rgba(11,11,11,.10); --blue:#2a78d6; --blue-dark:#184f95; --blue-wash:#e8f0fb; --aqua:#1baf7a; --aqua-wash:#e3f6ee; --critical:#d03b3b; --critical-wash:#fbe9e9}
     *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
     body{display:block; overflow:visible; padding:0; background:#fff}
     .controls{display:none}
@@ -321,7 +326,7 @@ Login:     j.doe / ••••••••</pre></div>
           <li><span class="badge">3</span><span>It's built to sound fluent, not to flag doubt: the tone is the same whether it's sure or just making something up.</span></li>
           <li><span class="badge">4</span><span>Disagreeing with it often makes it agree with you, which isn't the same as you being right.</span></li>
         </ol></div>
-      <div class="card"><p class="eyebrow" style="color:var(--aqua)">How to reduce it: prompt for it</p>
+      <div class="card"><p class="eyebrow" style="color:var(--aqua-text)">How to reduce it: prompt for it</p>
         <p>Try asking it this:</p>
         <blockquote>"Always tell me where this comes from. If you don't have a real source, or you're not sure, say so instead of guessing."</blockquote></div>
     </div>
@@ -335,7 +340,7 @@ Login:     j.doe / ••••••••</pre></div>
       <div class="card"><p class="eyebrow">The short version</p>
         <p>Courts have been ruling that something purely AI-written isn't protected by copyright at all, only the parts where a person actually made the creative decisions. Typing a good prompt, or picking your favorite draft out of a few, doesn't count as authorship on its own.</p>
         <p class="callout" style="margin-top:auto"><strong>In practice:</strong> a report or client note that's mostly untouched AI output may not be something the company can fully claim as its own work, or stop someone else from copying.</p></div>
-      <div class="card"><p class="eyebrow" style="color:var(--aqua)">How to stay covered</p>
+      <div class="card"><p class="eyebrow" style="color:var(--aqua-text)">How to stay covered</p>
         <ol class="num">
           <li><span class="badge teal">1</span><span><strong>Edit it, don't just copy it.</strong>Real changes and choices are what make something actually yours.</span></li>
           <li><span class="badge teal">2</span><span><strong>Keep a record.</strong>Note what was AI-drafted and what a person changed, especially for anything client-facing.</span></li>
@@ -357,7 +362,7 @@ Login:     j.doe / ••••••••</pre></div>
   <div class="bar" aria-hidden="true"><i id="progress"></i></div>
   <span id="counter" aria-live="polite">1 / 12</span>
   <button id="next" type="button" aria-label="Next slide">Next →</button>
-  <a class="dl" href="downloads/using-ai-at-work-slides.pdf" download aria-label="Download the slides as a PDF"><span class="dl-long">Download </span>PDF</a>
+  <a class="dl" href="downloads/using-ai-at-work-slides.pdf" download aria-label="Download PDF of the slides"><span class="dl-long">Download </span>PDF</a>
   <a class="home" href="./">← Dashboard</a>
 </nav>
 
@@ -396,7 +401,10 @@ Login:     j.doe / ••••••••</pre></div>
 
   document.addEventListener('keydown', function (e) {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (e.target.closest && e.target.closest('button, a, input, textarea, select, [contenteditable]')) return;
+    var t = e.target;
+    if (t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+    // Space activates a focused button or link; every other key still moves between slides.
+    if (e.key === ' ' && t.closest && t.closest('button, a')) return;
     switch (e.key) {
       case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); show(current + 1, true, true); break;
       case 'ArrowLeft': case 'PageUp': e.preventDefault(); show(current - 1, true, true); break;

@@ -14,7 +14,7 @@ import re
 import sys
 from pathlib import Path
 
-from check_dashboard import fmt, load_data
+from check_dashboard import DISPLAY_CODE, fmt, load_data
 
 ROOT = Path(__file__).resolve().parent.parent
 TARGETS = [ROOT / "docs" / "index.html", ROOT / "design" / "linkedin-carousel.html"]
@@ -35,7 +35,6 @@ TILES = {
     "Portugal": (6, 1), "Spain": (6, 2), "Italy": (6, 3), "Slovenia": (6, 4), "Croatia": (6, 5), "Bulgaria": (6, 6),
     "Malta": (7, 3), "Greece": (7, 6), "Cyprus": (7, 7),
 }
-DISPLAY_CODE = {"EL": "GR"}  # Eurostat writes Greece as EL; readers expect GR
 
 FUNCTION_LABELS = {
     "Marketing or Sales": "Marketing or sales",
@@ -111,7 +110,7 @@ def ranked(values: dict[str, float]) -> list[tuple[str, float]]:
 
 
 def country_list(d: dict) -> str:
-    countries, eu = d["countries"], d["trend"][max(d["trend"])]
+    countries, eu = d["countries"], d["trend"][d["year"]]    # same year as the countries being compared
     top = max(countries.values())
     rows = []
     for rank, (name, value) in enumerate(ranked(countries), start=1):
@@ -169,7 +168,7 @@ def size_rows(d: dict) -> str:
 
 
 def map_legend(d: dict) -> str:
-    eu = d["trend"][max(d["trend"])]
+    eu = d["trend"][d["year"]]
     top = round_up(max(d["countries"].values()))
     ticks = "".join(f'<span style="left:{v / top * 100:.1f}%">{v}%</span>' for v in (0, int(top // 10 * 10)))
     return (f'<div class="scale-legend" aria-hidden="true" style="--scale-l:linear-gradient(90deg,{",".join(RAMP)});'
@@ -215,6 +214,19 @@ def trend_chart(d: dict) -> str:
     return "\n".join(parts)
 
 
+GENAI_LABELS = {"private": "Private purposes", "work": "Professional or work purposes", "education": "Formal education"}
+
+
+def genai_meters(d: dict) -> str:
+    return "\n".join(
+        f'<div data-chart="genai" data-key="{key}" data-value="{value}">'
+        f'<p class="purpose-name">{esc(GENAI_LABELS[key])}</p>'
+        f'<p class="purpose-value">{fmt(value)}%</p>'
+        f'<div class="purpose-track"><div class="purpose-fill" style="width:{fmt(value)}%"></div></div></div>'
+        for key, value in d["genai"].items()
+    )
+
+
 def build_snippets() -> dict[str, str]:
     d = load_data()
     return {
@@ -225,10 +237,28 @@ def build_snippets() -> dict[str, str]:
         "functions": simple_bars("functions", d["functions"], FUNCTION_LABELS),
         "sectors": simple_bars("sectors", d["sectors"], SECTOR_LABELS),
         "sizes": size_rows(d),
+        "genai": genai_meters(d),
     }
 
 
-MARKER = re.compile(r"(<!-- gen:(?P<name>[\w-]+) -->)(?P<body>.*?)(<!-- /gen:(?P=name) -->)", re.S)
+# Regions each target must contain, so a deleted or misspelt marker fails loudly instead of leaving stale charts.
+REQUIRED_REGIONS = {
+    "docs/index.html": {"trend", "sizes", "functions", "sectors", "countries-list", "map-tiles", "map-legend", "genai"},
+    "design/linkedin-carousel.html": {"map-tiles"},
+}
+OPEN_MARKER = re.compile(r"<!--\s*gen:([\w-]+)\s*-->")
+CLOSE_MARKER = re.compile(r"<!--\s*/gen:([\w-]+)\s*-->")
+ANY_MARKER = re.compile(r"<!--\s*/?gen:")
+MARKER = re.compile(r"(<!--\s*gen:(?P<name>[\w-]+)\s*-->)(?P<body>.*?)(<!--\s*/gen:(?P=name)\s*-->)", re.S)
+
+
+def check_markers(text: str, required: set[str], label: str) -> None:
+    opens, closes = OPEN_MARKER.findall(text), CLOSE_MARKER.findall(text)
+    if len(ANY_MARKER.findall(text)) != len(opens) + len(closes) or sorted(opens) != sorted(closes):
+        raise ValueError(f"{label}: unbalanced or malformed gen markers (open {sorted(opens)}, close {sorted(closes)})")
+    missing = required - set(opens)
+    if missing:
+        raise ValueError(f"{label}: missing region(s) {sorted(missing)}")
 
 
 def inject(text: str, snippets: dict[str, str]) -> str:
@@ -247,6 +277,8 @@ def main() -> int:
             print(f"skip {path.relative_to(ROOT)} (not found)")
             continue
         before = path.read_text(encoding="utf-8")
+        label = path.relative_to(ROOT).as_posix()
+        check_markers(before, REQUIRED_REGIONS.get(label, set()), label)
         after = inject(before, snippets)
         found = MARKER.findall(before)
         if after != before:
